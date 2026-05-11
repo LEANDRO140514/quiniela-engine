@@ -1,11 +1,11 @@
-import Nav from '../shared/ui/Nav'
-import TopBar from '../shared/ui/TopBar'
-import Toast from '../shared/ui/Toast'
-import Momento0Oraculo from '../features/select-signs/Momento0Oraculo'
-import Momento1Arquitecto from '../features/generate-reduction/Momento1Arquitecto'
-import Momento2Notario from '../features/export-ticket/Momento2Notario'
-import Momento3Estadio from '../pages/results/Momento3Estadio'
-import { useStore } from '../app/providers/store'
+import Nav from '../../shared/ui/Nav'
+import TopBar from '../../shared/ui/TopBar'
+import Toast from '../../shared/ui/Toast'
+import Momento0Oraculo from '../../features/select-signs/Momento0Oraculo'
+import Momento1Arquitecto from '../../features/generate-reduction/Momento1Arquitecto'
+import Momento2Notario from '../../features/export-ticket/Momento2Notario'
+import Momento3Estadio from '../../pages/results/Momento3Estadio'
+import { useStore } from '../providers/store'
 
 const PAGES = [
   <Momento0Oraculo key="oraculo" />,
