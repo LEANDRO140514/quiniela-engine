@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reducidas 2026 • Quiniela / Progol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap");
+
+      :root {
+        --primary: #00f0ff;
+        --accent: #ff00cc;
+        --dark: #0a0a1f;
+        --card: #12122b;
+      }
+
+      * {
+        transition-property:
+          color, background-color, border-color, text-decoration-color, fill,
+          stroke;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+      }
+
+      .app-bg {
+        background: linear-gradient(135deg, #0a0a1f 0%, #1a1a3a 100%);
+        min-height: 100vh;
+        font-family: "Inter", system_ui, sans-serif;
+      }
+
+      .header-font {
+        font-family: "Space Grotesk", sans-serif;
+      }
+
+      .neon-text {
+        text-shadow:
+          0 0 10px #00f0ff,
+          0 0 20px #00f0ff,
+          0 0 40px #ff00cc;
+      }
+
+      .card {
+        background: rgba(18, 18, 43, 0.85);
+        border: 1px solid rgba(0, 240, 255, 0.3);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px -10px rgb(0 240 255);
+      }
+
+      .btn-modern {
+        background: linear-gradient(90deg, #00f0ff, #ff00cc);
+        color: #000;
+        font-weight: 700;
+        border-radius: 9999px;
+        padding: 14px 32px;
+        box-shadow: 0 0 20px #00f0ff;
+      }
+
+      .model-tab {
+        border-bottom: 4px solid transparent;
+      }
+      .model-tab.active {
+        border-bottom: 4px solid #00f0ff;
+        color: #00f0ff;
+      }
+
+      .partido-pill {
+        background: #1f1f3f;
+        border: 2px solid #00f0ff;
+      }
+    </style>
+  </head>
+  <body class="app-bg text-white">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+      <!-- HEADER 2026 -->
+      <div class="flex justify-between items-center mb-10">
+        <div class="flex items-center gap-4">
+          <div
+            class="w-12 h-12 bg-gradient-to-br from-[#00f0ff] to-[#ff00cc] rounded-2xl flex items-center justify-center text-3xl"
+          >
+            🎟️
+          </div>
+          <h1 class="header-font text-5xl font-bold neon-text tracking-tighter">
+            REDUCIDAS <span class="text-[#00f0ff]">2026</span>
+          </h1>
+        </div>
+        <div
+          class="flex items-center gap-3 bg-white/10 backdrop-blur-xl px-6 py-3 rounded-3xl text-sm font-medium"
+        >
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle text-emerald-400"></i>
+            <span>Modelo 14 + Modelo 13</span>
+          </div>
+          <div class="w-px h-4 bg-white/30"></div>
+          <span class="text-[#00f0ff]">Quiniela • Progol • La Quiniela</span>
+        </div>
+      </div>
+
+      <div class="flex gap-8">
+        <!-- LEFT: MODEL SELECTOR -->
+        <div class="w-80 flex-shrink-0">
+          <div class="card p-6 sticky top-8">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
+              <i class="fa-solid fa-sliders"></i>
+              Elige tu modelo
+            </h2>
+
+            <!-- TABS -->
+            <div class="flex border-b border-white/10 mb-8">
+              <button
+                onclick="switchModel(14)"
+                id="tab14"
+                class="model-tab active flex-1 py-4 text-center font-semibold text-lg"
+              >
+                MODELO 14<br /><span class="text-xs text-white/60"
+                  >DIRECTO</span
+                >
+              </button>
+              <button
+                onclick="switchModel(13)"
+                id="tab13"
+                class="model-tab flex-1 py-4 text-center font-semibold text-lg"
+              >
+                MODELO 13<br /><span class="text-xs text-white/60"
+                  >OFICIAL AL 13</span
+                >
+              </button>
+            </div>
+
+            <div id="panel14">
+              <div class="mb-6">
+                <p class="text-white/70 text-sm mb-3">
+                  Partidos con
+                  <span class="text-[#ff00cc] font-bold">TRIPLE (1X2)</span>
+                </p>
+                <div class="flex flex-wrap gap-2" id="triples14"></div>
+              </div>
+              <div>
+                <p class="text-white/70 text-sm mb-3">
+                  Partidos con
+                  <span class="text-[#00f0ff] font-bold">DOBLE (1X)</span>
+                </p>
+                <div class="flex flex-wrap gap-2" id="dobles14"></div>
+              </div>
+              <button
+                onclick="generarDirecto()"
+                class="btn-modern w-full mt-8 text-lg flex items-center justify-center gap-3"
+              >
+                <i class="fa-solid fa-bolt"></i>
+                GENERAR REDUCIDA DIRECTA
+              </button>
+            </div>
+
+            <div id="panel13" class="hidden">
+              <select
+                id="reduccionSelect"
+                onchange="mostrarInfoReduccion()"
+                class="w-full bg-[#1f1f3f] border border-[#00f0ff]/30 rounded-2xl px-5 py-4 text-white text-lg focus:outline-none focus:border-[#00f0ff]"
+              >
+                <option value="1">Reducción 1 → 4 Triples (9 boletos)</option>
+                <option value="2">Reducción 2 → 7 Dobles (16 boletos)</option>
+                <option value="3">Reducción 3 → 3T + 3D (24 boletos)</option>
+                <option value="4">Reducción 4 → 2T + 6D (64 boletos)</option>
+                <option value="5">Reducción 5 → 8 Triples (81 boletos)</option>
+                <option value="6">Reducción 6 → 11 Dobles (132 boletos)</option>
+              </select>
+
+              <div id="infoReduccion" class="mt-6 card p-5 text-sm"></div>
+
+              <button
+                onclick="generarReducida13()"
+                class="btn-modern w-full mt-8 text-lg flex items-center justify-center gap-3"
+              >
+                <i class="fa-solid fa-shield-halved"></i>
+                USAR REDUCCIÓN OFICIAL
+              </button>
+            </div>
+
+            <div class="text-[10px] text-white/40 mt-8 text-center">
+              Paleta 2026 • Cyber Neon Edition
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: RESULT + CONFIG -->
+        <div class="flex-1">
+          <div id="resultCard" class="card p-8 hidden">
+            <div class="flex justify-between items-start">
+              <div>
+                <span
+                  id="modelTitle"
+                  class="inline-block px-4 py-1 bg-white/10 text-xs font-bold rounded-3xl"
+                ></span>
+                <h3
+                  id="resultTitle"
+                  class="text-4xl font-bold mt-3 header-font"
+                ></h3>
+              </div>
+              <div class="text-right">
+                <div
+                  class="text-emerald-400 text-5xl font-bold"
+                  id="boletosCount"
+                >
+                  0
+                </div>
+                <div class="text-white/60 text-sm -mt-1">BOLETOS</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 my-8">
+              <div class="text-center bg-black/30 rounded-3xl p-4">
+                <div class="text-[#00f0ff] text-sm">AHORRO</div>
+                <div id="ahorroPercent" class="text-5xl font-bold">99.99%</div>
+              </div>
+              <div class="text-center bg-black/30 rounded-3xl p-4">
+                <div class="text-[#ff00cc] text-sm">PRECIO APROX.</div>
+                <div id="precioResult" class="text-5xl font-bold">— €</div>
+              </div>
+              <div class="text-center bg-black/30 rounded-3xl p-4">
+                <div class="text-emerald-400 text-sm">GARANTÍA</div>
+                <div id="garantiaResult" class="text-4xl font-bold">—</div>
+              </div>
+            </div>
+
+            <!-- Configuración visual -->
+            <div class="mb-6">
+              <p class="text-white/60 text-sm mb-4">
+                Tu configuración (14 partidos)
+              </p>
+              <div id="configVisual" class="grid grid-cols-7 gap-3"></div>
+            </div>
+
+            <div class="flex gap-4">
+              <button
+                onclick="descargarCSV()"
+                class="flex-1 border border-[#00f0ff] hover:bg-[#00f0ff]/10 text-white py-6 rounded-3xl font-semibold flex items-center justify-center gap-3 text-lg"
+              >
+                <i class="fa-solid fa-download"></i>
+                DESCARGAR CSV
+              </button>
+              <button
+                onclick="nuevaReducida()"
+                class="flex-1 bg-white/10 hover:bg-white/20 text-white py-6 rounded-3xl font-semibold"
+              >
+                NUEVA REDUCIDA
+              </button>
+            </div>
+          </div>
+
+          <!-- Placeholder inicial -->
+          <div id="placeholder" class="card p-16 text-center">
+            <div
+              class="mx-auto w-24 h-24 bg-gradient-to-br from-[#00f0ff]/20 to-[#ff00cc]/20 rounded-3xl flex items-center justify-center text-6xl mb-6"
+            >
+              🎯
+            </div>
+            <h3 class="text-3xl font-semibold mb-3">
+              Elige modelo y configuración
+            </h3>
+            <p class="text-white/60 max-w-xs mx-auto">
+              Genera reducidas al directo (Modelo 14) o las oficiales
+              garantizadas al 13 (Modelo 13) con diseño futurista 2026.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let modeloActual = 14;
+      let config = Array(14).fill("1");
+
+      const REDUCCIONES = {
+        1: {
+          nombre: "Reducción 1 - 4 Triples",
+          boletos: 9,
+          precio: 6.75,
+          garantia: "100% 13 aciertos",
+        },
+        2: {
+          nombre: "Reducción 2 - 7 Dobles",
+          boletos: 16,
+          precio: 12,
+          garantia: "100% 13 aciertos",
+        },
+        3: {
+          nombre: "Reducción 3 - 3T + 3D",
+          boletos: 24,
+          precio: 18,
+          garantia: "100% 13 aciertos",
+        },
+        4: {
+          nombre: "Reducción 4 - 2T + 6D",
+          boletos: 64,
+          precio: 48,
+          garantia: "100% 13 aciertos",
+        },
+        5: {
+          nombre: "Reducción 5 - 8 Triples",
+          boletos: 81,
+          precio: 60.75,
+          garantia: "100% 13 aciertos",
+        },
+        6: {
+          nombre: "Reducción 6 - 11 Dobles",
+          boletos: 132,
+          precio: 99,
+          garantia: "100% 13 aciertos",
+        },
+      };
+
+      function switchModel(m) {
+        modeloActual = m;
+        document.getElementById("tab14").classList.toggle("active", m === 14);
+        document.getElementById("tab13").classList.toggle("active", m === 13);
+        document.getElementById("panel14").classList.toggle("hidden", m === 13);
+        document.getElementById("panel13").classList.toggle("hidden", m === 14);
+      }
+
+      function generarPartidos(containerId, tipo) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        for (let i = 1; i <= 14; i++) {
+          const pill = document.createElement("button");
+          pill.className = `partido-pill text-xs font-bold w-10 h-10 flex items-center justify-center rounded-2xl ${tipo === "triple" ? "border-[#ff00cc]" : "border-[#00f0ff]"}`;
+          pill.textContent = i;
+          pill.onclick = () => togglePartido(i - 1, tipo, pill);
+          container.appendChild(pill);
+        }
+      }
+
+      function togglePartido(index, tipo, pill) {
+        if (tipo === "triple") {
+          config[index] = config[index] === "1X2" ? "1" : "1X2";
+          pill.style.backgroundColor =
+            config[index] === "1X2" ? "#ff00cc" : "#1f1f3f";
+          pill.style.color = config[index] === "1X2" ? "#000" : "#fff";
+        } else {
+          if (config[index] === "1X2") return;
+          config[index] = config[index] === "1X" ? "1" : "1X";
+          pill.style.backgroundColor =
+            config[index] === "1X" ? "#00f0ff" : "#1f1f3f";
+          pill.style.color = config[index] === "1X" ? "#000" : "#fff";
+        }
+      }
+
+      function generarDirecto() {
+        let triples = 0,
+          dobles = 0;
+        config.forEach((c) => {
+          if (c === "1X2") triples++;
+          else if (c === "1X") dobles++;
+        });
+
+        const total = Math.pow(3, triples) * Math.pow(2, dobles);
+        const full = Math.pow(3, 14);
+        const ahorro = ((1 - total / full) * 100).toFixed(3);
+
+        mostrarResultado({
+          modelo: "14",
+          titulo: "MODELO 14 — DIRECTO",
+          boletos: total,
+          ahorro: ahorro + "%",
+          precio: (total * 0.75).toFixed(2) + " €",
+          garantia: "Máxima probabilidad 14",
+          config: config.slice(),
+        });
+      }
+
+      function mostrarInfoReduccion() {
+        const id = parseInt(document.getElementById("reduccionSelect").value);
+        const info = REDUCCIONES[id];
+        const div = document.getElementById("infoReduccion");
+        div.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <div class="font-semibold">${info.nombre}</div>
+                    <div class="text-4xl font-bold text-[#00f0ff]">${info.boletos}</div>
+                </div>
+                <div class="text-emerald-400 text-sm mt-1">${info.garantia}</div>
+                <div class="mt-4 flex justify-between text-xs">
+                    <span>Precio aprox.</span>
+                    <span class="font-bold">${info.precio} €</span>
+                </div>
+            `;
+      }
+
+      function generarReducida13() {
+        const id = parseInt(document.getElementById("reduccionSelect").value);
+        const info = REDUCCIONES[id];
+
+        mostrarResultado({
+          modelo: "13",
+          titulo: info.nombre,
+          boletos: info.boletos,
+          ahorro: "99.999%",
+          precio: info.precio + " €",
+          garantia: info.garantia,
+          config: config.slice(),
+          oficial: true,
+        });
+      }
+
+      function mostrarResultado(data) {
+        document.getElementById("placeholder").classList.add("hidden");
+        const card = document.getElementById("resultCard");
+        card.classList.remove("hidden");
+
+        document.getElementById("modelTitle").innerHTML =
+          `MODELO ${data.modelo} ${data.oficial ? "— OFICIAL" : "— DIRECTO"}`;
+        document.getElementById("resultTitle").textContent = data.titulo;
+        document.getElementById("boletosCount").textContent =
+          data.boletos.toLocaleString("es-ES");
+        document.getElementById("ahorroPercent").innerHTML =
+          data.ahorro +
+          ' <span class="text-xl font-normal text-white/60">AHORRO</span>';
+        document.getElementById("precioResult").textContent = data.precio;
+        document.getElementById("garantiaResult").innerHTML = data.garantia;
+
+        // Visual de partidos
+        const visual = document.getElementById("configVisual");
+        visual.innerHTML = "";
+        data.config.forEach((signo, i) => {
+          const div = document.createElement("div");
+          div.className = `rounded-2xl p-3 text-center text-xs font-bold ${signo === "1X2" ? "bg-[#ff00cc] text-black" : signo === "1X" ? "bg-[#00f0ff] text-black" : "bg-white/10"}`;
+          div.innerHTML = `<div class="text-[10px] opacity-70">P${i + 1}</div>${signo}`;
+          visual.appendChild(div);
+        });
+
+        // Guardar datos para CSV
+        window.lastData = data;
+      }
+
+      function descargarCSV() {
+        if (!window.lastData) return;
+        const data = window.lastData;
+        let csvContent = "Partido,Signo\n";
+        data.config.forEach((signo, i) => {
+          csvContent += `${i + 1},${signo}\n`;
+        });
+
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `reducida_${data.modelo}_${new Date().toISOString().slice(0, 16)}.csv`;
+        link.click();
+      }
+
+      function nuevaReducida() {
+        location.reload();
+      }
+
+      // Inicializar
+      window.onload = () => {
+        generarPartidos("triples14", "triple");
+        generarPartidos("dobles14", "doble");
+        mostrarInfoReduccion();
+      };
+    </script>
+  </body>
+</html>

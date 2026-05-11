@@ -1,0 +1,41 @@
+# Node / pnpm
+node_modules/
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+.esbuild/
+.next/
+out/
+coverage/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Cursor / Claude / tools
+.cursor/
+.claude/
+.npm/
+
+# Tests artifacts
+jest-html-reporters-*
+playwright-report/
+test-results/

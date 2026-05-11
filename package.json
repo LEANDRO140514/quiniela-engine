@@ -1,0 +1,9 @@
+{
+  "name": "curdeeclau-monorepo",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {},
+  "engines": {
+    "node": ">=20"
+  }
+}
