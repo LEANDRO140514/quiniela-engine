@@ -4,59 +4,133 @@ import type { Signo } from '../../lib/quiniela'
 const CSS = `
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 11pt;
+  font-family: 'Courier New', monospace;
+  font-size: 10pt;
   color: #111;
+  background: #fff;
   padding: 20px;
   max-width: 100%;
 }
-h1 { font-size: 16pt; font-weight: 700; margin-bottom: 4px; }
-h2 { font-size: 12pt; font-weight: 600; color: #333; margin-bottom: 12px; }
-.header { border-bottom: 3px solid #111; padding-bottom: 12px; margin-bottom: 16px; }
-.header-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: 10pt; color: #555; margin-top: 8px; }
-.header-meta span { background: #f0f0f0; padding: 2px 10px; border-radius: 4px; }
-.config-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 20px; }
+.header { border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 12px; }
+.header h1 { font-size: 14pt; font-weight: 700; letter-spacing: 1px; }
+.header h2 { font-size: 10pt; font-weight: 400; color: #555; margin-top: 2px; }
+.header-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 8pt; color: #333; margin-top: 6px; }
+.header-meta span { border: 1px solid #999; padding: 1px 8px; font-weight: 600; }
+
+/* ─── Config pills ─── */
+.config-row { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 14px; }
 .config-pill {
-  padding: 2px 8px; font-size: 9pt; font-weight: 600; border: 1px solid #999;
-  border-radius: 4px; min-width: 32px; text-align: center;
+  padding: 1px 6px; font-size: 7pt; font-weight: 700; border: 1px solid #888;
+  min-width: 36px; text-align: center;
 }
-.config-pill.triple { border-color: #cc00aa; color: #cc00aa; border-width: 2px; }
-.config-pill.doble { border-color: #0088cc; color: #0088cc; border-width: 2px; }
-.config-pill.fijo { border-color: #999; color: #555; }
-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-th { background: #111; color: #fff; padding: 6px 4px; font-size: 9pt; font-weight: 600; text-align: center; }
-td { padding: 5px 4px; font-size: 10pt; text-align: center; border-bottom: 1px solid #e0e0e0; }
-tr:nth-child(even) td { background: #f5f5f5; }
-.col-num { color: #999; font-size: 9pt; width: 30px; }
+.config-pill.triple { border-color: #c0c; color: #c0c; border-width: 2px; }
+.config-pill.doble { border-color: #088; color: #088; border-width: 2px; }
+.config-pill.fijo { border-color: #aaa; color: #444; }
+
+/* ─── Boleto grid ─── */
+.boleto {
+  border: 2px solid #111;
+  margin-bottom: 16px;
+  page-break-inside: avoid;
+}
+.boleto-header {
+  background: #111; color: #fff; padding: 4px 10px;
+  font-size: 9pt; font-weight: 700; letter-spacing: 1px;
+}
+.boleto-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.boleto-col {
+  display: grid;
+  grid-template-rows: repeat(7, auto);
+}
+.match-row {
+  display: flex; align-items: center; gap: 0;
+  border-bottom: 1px solid #ddd;
+  min-height: 28px;
+}
+.match-num {
+  width: 28px; text-align: center; font-size: 7pt; font-weight: 700;
+  color: #666; border-right: 1px solid #ddd; padding: 2px 0;
+}
+.casilla {
+  width: 32px; height: 24px; display: flex; align-items: center; justify-content: center;
+  font-size: 8pt; font-weight: 700; color: #aaa; border-right: 1px solid #e8e8e8;
+  transition: none;
+}
+.casilla:last-child { border-right: none; }
+.casilla.marcado {
+  background: #111; color: #fff;
+}
+
+/* ─── Info box (sin columnas) ─── */
 .info-box {
   background: #fff8e1; border: 1px solid #ffc107; padding: 16px;
-  border-radius: 8px; text-align: center; margin: 24px 0; font-size: 11pt;
+  text-align: center; margin: 20px 0; font-size: 10pt; font-weight: 600;
 }
-.footer {
-  margin-top: 24px; padding-top: 12px; border-top: 1px solid #ddd;
-  font-size: 9pt; color: #888; text-align: center;
+
+/* ─── Footer legal ─── */
+.footer-legal {
+  margin-top: 20px; padding: 10px; border: 1px solid #999;
+  font-size: 8pt; color: #555; text-align: center; line-height: 1.4;
 }
-.page-break { page-break-before: always; }
+.footer-legal strong { color: #111; }
+
 @media print {
-  @page { size: A4; margin: 1.2cm; }
+  @page { size: A4; margin: 1cm; }
   body { padding: 0; }
-  tr:nth-child(even) td { background: #f5f5f5 !important; print-color-adjust: exact; }
-  th { print-color-adjust: exact; }
-  .page-break { page-break-before: auto; }
+  .boleto { print-color-adjust: exact; }
+  .boleto-header { print-color-adjust: exact; }
+  .casilla.marcado { print-color-adjust: exact; }
   .no-print { display: none; }
 }
 `
 
-function signoEscrito(s: string): string {
-  if (s === '1X2') return '1X2'
-  if (s.length === 2) return s
-  return s
+/** Convierte un signo a las casillas L/E/V marcadas */
+function signoACasillas(s: Signo): { L: boolean; E: boolean; V: boolean } {
+  if (s === '1X2') return { L: true, E: true, V: true }
+  if (s === '1X') return { L: true, E: true, V: false }
+  if (s === '12') return { L: true, E: false, V: true }
+  if (s === 'X2') return { L: false, E: true, V: true }
+  if (s === '1') return { L: true, E: false, V: false }
+  if (s === 'X') return { L: false, E: true, V: false }
+  return { L: false, E: false, V: true } // '2'
 }
 
-function signoClass(s: string): string {
-  if (s === '1X2') return 'triple'
-  if (s.length === 2) return 'doble'
-  return 'fijo'
+function renderCasilla(activa: boolean, label: string): string {
+  return `<div class="casilla${activa ? ' marcado' : ''}">${label}</div>`
+}
+
+/** Renderiza un boleto (columna de 14 signos) */
+function renderBoleto(signos: Signo[], numBoleto: number): string {
+  // Partidos 1-7 (izquierda) y 8-14 (derecha)
+  const izq = signos.slice(0, 7)
+  const der = signos.slice(7, 14)
+
+  function renderColumna(signos: Signo[], offset: number): string {
+    return signos
+      .map((s, i) => {
+        const idx = offset + i + 1
+        const cas = signoACasillas(s)
+        return `<div class="match-row">
+          <div class="match-num">${idx}</div>
+          ${renderCasilla(cas.L, 'L')}
+          ${renderCasilla(cas.E, 'E')}
+          ${renderCasilla(cas.V, 'V')}
+        </div>`
+      })
+      .join('')
+  }
+
+  return `<div class="boleto">
+    <div class="boleto-header">BOLETO ${numBoleto}</div>
+    <div class="boleto-grid">
+      <div class="boleto-col">${renderColumna(izq, 0)}</div>
+      <div class="boleto-col">${renderColumna(der, 7)}</div>
+    </div>
+  </div>`
 }
 
 export function exportarHTML(resultado: BoletosGenerados): { ok: boolean; reason?: string } {
@@ -65,38 +139,32 @@ export function exportarHTML(resultado: BoletosGenerados): { ok: boolean; reason
   })
   const tieneColumnas = resultado.columnas && resultado.columnas.length > 0
 
-  // Tabla o info box
   let cuerpoHTML: string
   if (tieneColumnas) {
-    const thead = '<tr><th>#</th>' + Array.from({ length: 14 }, (_, i) => `<th>P${i + 1}</th>`).join('') + '</tr>'
-    const filas: string[] = []
-    const columnas = resultado.columnas!
-    for (let i = 0; i < columnas.length; i++) {
-      // Page break cada 40 filas para impresión
-      const pageBreak = i > 0 && i % 40 === 0 ? ' class="page-break"' : ''
-      const celdas = columnas[i].map((s) => `<td>${signoEscrito(s)}</td>`).join('')
-      filas.push(`<tr${pageBreak}><td class="col-num">${i + 1}</td>${celdas}</tr>`)
-    }
-    cuerpoHTML = `<table><thead>${thead}</thead><tbody>${filas.join('\n')}</tbody></table>`
+    const boletos = resultado.columnas!
+      .map((col, i) => renderBoleto(col as Signo[], i + 1))
+      .join('\n')
+    cuerpoHTML = boletos
   } else {
     cuerpoHTML = `<div class="info-box">
-      Esta reducción tiene <strong>${resultado.boletos.toLocaleString('es-MX')} boletos</strong>
-      garantizados al nivel especificado, pero las columnas aún no están integradas en el motor.
+      Reducción con <strong>${resultado.boletos.toLocaleString('es-MX')} boletos</strong>
+      garantizados. Las columnas se integrarán próximamente en el motor.
     </div>`
   }
 
+  const signoLabel = (s: string, i: number) => `${i + 1}:${s}`
   const configPills = resultado.config
     .map((s, i) => {
-      const label = `${i + 1}: ${signoEscrito(s)}`
-      return `<span class="config-pill ${signoClass(s)}" title="P${i + 1}">${label}</span>`
+      const cls = s === '1X2' ? 'triple' : s.length === 2 ? 'doble' : 'fijo'
+      return `<span class="config-pill ${cls}">${signoLabel(s, i)}</span>`
     })
     .join('')
 
   const html = `<!DOCTYPE html>
-<html lang="es">
+<html lang="es-MX">
 <head>
   <meta charset="UTF-8" />
-  <title>Quiniela — ${resultado.titulo}</title>
+  <title>Progol — ${resultado.titulo}</title>
   <style>${CSS}</style>
 </head>
 <body>
@@ -115,30 +183,30 @@ export function exportarHTML(resultado: BoletosGenerados): { ok: boolean; reason
 
   ${cuerpoHTML}
 
-  <div class="footer">
-    Genera tu boleto en la ventanilla oficial. Esta guía es generada por quiniela-engine.
+  <div class="footer-legal">
+    <strong>Guía generada por quiniela-engine — NO es comprobante oficial.</strong><br />
+    Juega tu boleto en una agencia autorizada de Lotería Nacional.
   </div>
 
-  <div class="footer no-print" style="margin-top:8px;color:#aaa;">
+  <div class="no-print" style="text-align:center;margin-top:10px;font-size:8pt;color:#aaa;">
     Pulsa Ctrl+P (Cmd+P en Mac) para imprimir esta hoja.
   </div>
 </body>
 </html>`
 
-  const w = window.open('', '_blank')
+  // Usar data URI en vez de window.open + write para evitar bloqueo de popups
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const w = window.open(url, '_blank')
   if (!w) {
-    // Fallback: download
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `quiniela_${resultado.modelo}_${new Date().toISOString().slice(0, 10)}.html`
+    a.download = `progol_${resultado.modelo}_${new Date().toISOString().slice(0, 10)}.html`
     a.click()
     URL.revokeObjectURL(url)
     return { ok: true, reason: 'popup-blocked-download' }
   }
-
-  w.document.write(html)
-  w.document.close()
+  // Limpieza diferida
+  setTimeout(() => URL.revokeObjectURL(url), 5000)
   return { ok: true }
 }
