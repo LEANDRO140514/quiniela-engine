@@ -129,21 +129,37 @@ export default function Momento1Arquitecto() {
       const resultadoRed = obtenerColumnasReduccion(config, r.id)
       if (!resultadoRed.disponible) {
         pushToast('Matrices de reducción pendientes de integrar. Usa Modelo 14 Directo para obtener columnas reales.', 'warning')
-        // Aun así mostramos los metadatos (sin columnas)
         const ahorro = (calcularAhorroReduccion(config, r.columnasRequeridas) * 100).toFixed(1)
         const res = {
-          modelo: 13,
+          modelo: r.nivel,
           titulo: r.nombre,
           boletos: r.columnasRequeridas,
           ahorro: ahorro + '%',
           precio: (r.columnasRequeridas * PRECIO_POR_COLUMNA).toFixed(2) + ' €',
+          garantia: `Garantía 100% al ${r.nivel} (pendiente de integrar)`,
+          config: [...config],
+          columnas: [],
+          oficial: false,
+        }
+        setResultado(res)
+        agregarHistorial({ id: crypto.randomUUID(), fecha: new Date().toISOString(), modelo: r.nivel, titulo: r.nombre, boletos: r.columnasRequeridas, precio: res.precio, config: [...config], ahorro: res.ahorro })
+      } else {
+        const columnasReales = resultadoRed.columnas!
+        const ahorro = (calcularAhorroReduccion(config, r.columnasRequeridas) * 100).toFixed(1)
+        const res = {
+          modelo: r.nivel,
+          titulo: r.nombre,
+          boletos: columnasReales.length,
+          ahorro: ahorro + '%',
+          precio: (columnasReales.length * PRECIO_POR_COLUMNA).toFixed(2) + ' €',
           garantia: `Garantía 100% al ${r.nivel}`,
           config: [...config],
-          columnas: [], // Sin columnas — matrices pendientes
+          columnas: columnasReales as unknown as Signo[][],
           oficial: true,
         }
         setResultado(res)
-        agregarHistorial({ id: crypto.randomUUID(), fecha: new Date().toISOString(), modelo: 13, titulo: r.nombre, boletos: r.columnasRequeridas, precio: res.precio, config: [...config], ahorro: res.ahorro })
+        agregarHistorial({ id: crypto.randomUUID(), fecha: new Date().toISOString(), modelo: r.nivel, titulo: r.nombre, boletos: res.boletos, precio: res.precio, config: [...config], ahorro: res.ahorro })
+        pushToast(`Reducción al ${r.nivel} generada: ${columnasReales.length} columnas reales`, 'success')
       }
     }
   }
