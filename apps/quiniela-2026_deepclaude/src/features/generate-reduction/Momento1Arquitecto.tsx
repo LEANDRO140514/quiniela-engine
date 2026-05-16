@@ -16,6 +16,7 @@ import {
   TOTAL_COLUMNAS_UNIVERSO,
 } from '../../lib/quiniela'
 import { exportarCSV, copiarPortapapeles } from '../../shared/lib/export'
+import { exportarHTML } from '../../shared/lib/exportHtml'
 import type { Signo, NivelReduccion } from '../../shared/types'
 import type { Columna } from '../../lib/quiniela/types'
 import Button from '../../shared/ui/Button'
@@ -440,11 +441,10 @@ export default function Momento1Arquitecto() {
                   ))}
                 </div>
 
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
                     onClick={() => { setColumnaPreview(resultado.columnas ?? []); setShowColumnas(true) }}
                   >
                     <i className="fa-solid fa-table-list" /> Boletos
@@ -452,7 +452,6 @@ export default function Momento1Arquitecto() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
                     onClick={() => { exportarCSV(resultado); pushToast('CSV descargado', 'success') }}
                   >
                     <i className="fa-solid fa-download" /> CSV
@@ -460,13 +459,25 @@ export default function Momento1Arquitecto() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
                     onClick={async () => {
                       const ok = await copiarPortapapeles(resultado)
                       pushToast(ok ? 'Copiado al portapapeles' : 'Error', ok ? 'success' : 'error')
                     }}
                   >
                     <i className="fa-solid fa-copy" /> Copiar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const res = exportarHTML(resultado)
+                      pushToast(
+                        res.reason === 'popup-blocked-download' ? 'Popup bloqueado. Archivo descargado.' : 'Documento HTML abierto',
+                        'success',
+                      )
+                    }}
+                  >
+                    <i className="fa-solid fa-print" /> HTML
                   </Button>
                 </div>
               </div>
