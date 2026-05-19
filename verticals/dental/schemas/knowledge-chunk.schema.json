@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "verticals/dental/schemas/knowledge-chunk.schema.json",
+  "title": "KnowledgeChunk",
+  "description": "Fragmento de conocimiento preparado para indexación RAG",
+  "type": "object",
+  "required": ["id", "sourceId", "content", "category"],
+  "properties": {
+    "id": { "type": "string" },
+    "sourceId": { "type": "string", "description": "ID del documento fuente original" },
+    "content": { "type": "string", "minLength": 10 },
+    "category": {
+      "type": "string",
+      "enum": ["faq", "procedure", "policy", "terminology", "emergency", "insurance", "pricing", "onboarding", "general"]
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "source": { "type": "string" },
+        "chunkIndex": { "type": "integer" },
+        "totalChunks": { "type": "integer" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "embedding": {
+      "type": "array",
+      "items": { "type": "number" },
+      "description": "Vector de embedding (poblado en fase 3+)"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "vertical": "dental",
+  "name": "Dental AI Receptionist",
+  "version": "0.2.1",
+  "description": "Conocimiento específico del dominio dental para el recepcionista virtual con IA",
+  "language": "es-MX",
+  "domains": [
+    "general-dentistry",
+    "orthodontics",
+    "periodontics",
+    "endodontics",
+    "pediatric-dentistry",
+    "oral-surgery",
+    "cosmetic-dentistry"
+  ],
+  "knowledgeFiles": {
+    "faq": "knowledge/faq.json",
+    "procedures": "knowledge/procedures.json",
+    "terminology": "knowledge/terminology.json",
+    "policies": "knowledge/policies.json",
+    "emergencyProtocols": "knowledge/emergency_protocols.json",
+    "insurance": "knowledge/insurance.json",
+    "pricingReference": "knowledge/pricing_reference.json",
+    "onboarding": "knowledge/onboarding.json"
+  },
+  "schemas": {
+    "faq": "schemas/faq.schema.json",
+    "procedure": "schemas/procedure.schema.json",
+    "appointment": "schemas/appointment.schema.json",
+    "patient": "schemas/patient.schema.json",
+    "knowledgeChunk": "schemas/knowledge-chunk.schema.json"
+  },
+  "prompts": {
+    "system": "prompts/receptionist.system.txt",
+    "personality": "prompts/receptionist.personality.json",
+    "escalationRules": "prompts/escalation-rules.json"
+  },
+  "policies": {
+    "handoff": "policies/handoff-policy.json",
+    "calendar": "policies/calendar-policy.json",
+    "media": "policies/media-policy.json"
+  },
+  "states": "states/state-machine.json",
+  "tools": "tools/manifest.json",
+  "workflows": {
+    "phase2": "workflows/manifest.json",
+    "sarahRuntime": "workflows/sarah-runtime.manifest.json"
+  },
+  "config": "config/vertical.json"
+}

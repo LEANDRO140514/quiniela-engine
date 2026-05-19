@@ -1,0 +1,406 @@
+{
+  "name": "Comprobar Fecha Cabañas",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FechaInicio\": \"2025-07-09T14:00:00\",\n  \"FechaFin\": \"2025-07-14T10:00:00\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -768,
+        208
+      ],
+      "id": "9e6cb866-af7c-4faa-9c3e-8492813e6eb8",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d31283d5-aa5a-432d-a457-9a071ee666f6",
+              "name": "mensaje enviado",
+              "value": "La fecha ingresada es pasada, por favor ingrese una fecha válida.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "4103cf41-8036-478f-909b-ac3eac95ceab",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node (JavaScript) — fija horas BA: inicio 14:00, fin 10:00\n\nfunction getYMD(input) {\n  if (input == null) return null;\n  const s = String(input).trim();\n  // Extrae YYYY-MM-DD de lo que venga (con o sin \"T\" u hora)\n  const m = s.match(/\\d{4}-\\d{2}-\\d{2}/);\n  return m ? m[0] : null;\n}\n\nfunction buildBA(ymd, hour, min = 0, sec = 0) {\n  if (!ymd) return null;\n  const hh = String(hour).padStart(2, '0');\n  const mm = String(min).padStart(2, '0');\n  const ss = String(sec).padStart(2, '0');\n  // Buenos Aires usa UTC-03 y no aplica DST actualmente\n  // Generamos RFC3339 con offset fijo -03:00\n  return `${ymd}T${hh}:${mm}:${ss}-03:00`;\n}\n\nconst inItem = $input.first().json;\n\nconst ymdStart = getYMD(inItem.FechaInicio ?? inItem.Fechainicio ?? inItem.fechaInicio ?? inItem.fechainicio);\nconst ymdEnd   = getYMD(inItem.FechaFin    ?? inItem.Fechafin    ?? inItem.fechaFin    ?? inItem.fechafin);\n\nconst fechaInicioBA = buildBA(ymdStart, 14, 0, 0);\nconst fechaFinBA    = buildBA(ymdEnd,   10, 0, 0);\n\nconst fechaInicioUTC = fechaInicioBA ? new Date(fechaInicioBA).toISOString() : null;\nconst fechaFinUTC    = fechaFinBA    ? new Date(fechaFinBA).toISOString()    : null;\n\n// Validaciones básicas\nlet valida = true;\nconst mensajes = [];\nif (!ymdStart) { valida = false; mensajes.push(\"Fechainicio ausente o con formato inválido (esperado YYYY-MM-DD).\"); }\nif (!ymdEnd)   { valida = false; mensajes.push(\"FechaFin ausente o con formato inválido (esperado YYYY-MM-DD).\"); }\nif (fechaInicioBA && fechaFinBA && new Date(fechaFinBA) <= new Date(fechaInicioBA)) {\n  valida = false; mensajes.push(\"FechaFin debe ser posterior a Fechainicio.\");\n}\n\n// Noches (días completos entre fechas)\nlet noches = null;\nif (fechaInicioBA && fechaFinBA) {\n  const ms = new Date(fechaFinBA) - new Date(fechaInicioBA);\n  noches = Math.round(ms / 86400000);\n}\n\nreturn [\n  {\n    json: {\n      valida,\n      mensaje: mensajes.length ? mensajes.join(\" \") : \"Rango válido con horas fijas (BA).\",\n      entrada: { Fechainicio: inItem.Fechainicio ?? inItem.FechaInicio ?? inItem.fechainicio ?? inItem.fechaInicio, FechaFin: inItem.FechaFin ?? inItem.Fechafin ?? inItem.fechafin ?? inItem.fechaFin },\n      // Normalizados\n      fechaInicioYMD: ymdStart,\n      fechaFinYMD: ymdEnd,\n      // RFC3339 en Buenos Aires (ART, UTC-03:00)\n      fechaInicioBA: fechaInicioBA,   // ej: 2025-10-06T14:00:00-03:00\n      fechaFinBA: fechaFinBA,         // ej: 2025-10-10T10:00:00-03:00\n      // Equivalentes UTC (Z) por si los necesita Calendar u otros\n      fechaInicioUTC: fechaInicioUTC, // ej: 2025-10-06T17:00:00.000Z\n      fechaFinUTC: fechaFinUTC,       // ej: 2025-10-10T13:00:00.000Z\n      noches\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        208
+      ],
+      "id": "5cc84220-b80a-4880-8723-16d74870477b",
+      "name": "Fecha pasada o futura?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b5fbe098-7ea1-4cda-abc8-ec9b060131c3",
+              "leftValue": "={{ $json.valida }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        208
+      ],
+      "id": "a416f2bf-04da-4eb2-a846-b29e3cc316da",
+      "name": "valida?"
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "timeMin": "={{ $json.fechaInicioBA }}",
+        "timeMax": "={{ $json.fechaFinBA }}",
+        "options": {
+          "outputFormat": "availability"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        224
+      ],
+      "id": "aac158ac-4f12-4260-8997-d96d9a539319",
+      "name": "Get availability in a calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fc041838-a1c3-4d3a-8cef-bfc34d1ff4e6",
+              "name": "entrada.Fechainicio",
+              "value": "={{ $json.entrada.Fechainicio }}",
+              "type": "string"
+            },
+            {
+              "id": "ed53754e-36f3-46b0-8d2f-8904d561d24a",
+              "name": "entrada.FechaFin",
+              "value": "={{ $json.entrada.FechaFin }}",
+              "type": "string"
+            },
+            {
+              "id": "f467e97f-c436-41a3-abd6-8937a408f717",
+              "name": "valida",
+              "value": "={{ $json.valida }}",
+              "type": "boolean"
+            },
+            {
+              "id": "d4f8b24a-df1c-4f6a-b9cb-0838b7535894",
+              "name": "fechaInicioBA",
+              "value": "={{ $json.fechaInicioBA }}",
+              "type": "string"
+            },
+            {
+              "id": "a6ccb78c-7af2-4f43-a362-5078208e8493",
+              "name": "fechaFinBA",
+              "value": "={{ $json.fechaFinBA }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        208
+      ],
+      "id": "3da7a216-dafe-4958-8012-aefef5460fe4",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aab0f970-bcf3-467b-8234-200e76c6c98e",
+              "leftValue": "={{ $json.available }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        224
+      ],
+      "id": "2c7967c7-a2e4-46cf-8418-fee134794d71",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d31283d5-aa5a-432d-a457-9a071ee666f6",
+              "name": "mensaje enviado",
+              "value": "Lo siento, esta fecha ya está reservada.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        592
+      ],
+      "id": "ca9bb913-71f7-428d-bfff-4842d1631ebf",
+      "name": "Edit Fields5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d31283d5-aa5a-432d-a457-9a071ee666f6",
+              "name": "mensaje enviado",
+              "value": "La fecha está disponible!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        80
+      ],
+      "id": "36476bc2-9f0c-4949-b1ea-850335580972",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KamVtCxjBnnEqEvO",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KamVtCxjBnnEqEvO",
+          "cachedResultName": "Entregar Horarios Cabañas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FechaInicio": "={{ $('When Executed by Another Workflow').item.json.FechaInicio }}",
+            "FechaFin": "={{ $('When Executed by Another Workflow').item.json.FechaFin }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "FechaInicio",
+              "displayName": "FechaInicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "FechaFin",
+              "displayName": "FechaFin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        368
+      ],
+      "id": "7745bcdc-1502-428d-9573-cba1a7b017c1",
+      "name": "Call 'EntregarHorarios Cabañas'"
+    }
+  ],
+  "pinData": {
+    "Edit Fields5": [
+      {
+        "json": {
+          "mensaje enviado": "Lo siento, esta fecha ya está reservada."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Fecha pasada o futura?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fecha pasada o futura?": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "valida?": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get availability in a calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "valida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get availability in a calendar": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'EntregarHorarios Cabañas'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c4280251-e0ad-4eb4-a8e2-391cee4c7515",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "02YrPpZO3NzR4Kvg",
+  "tags": []
+}

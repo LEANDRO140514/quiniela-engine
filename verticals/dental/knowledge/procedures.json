@@ -1,0 +1,35 @@
+[
+  {
+    "id": "proc-001",
+    "category": "procedure",
+    "name": "Limpieza Dental (Profilaxis)",
+    "durationMinutes": 45,
+    "description": "Eliminación de placa bacteriana y sarro de la superficie dental con ultrasonido y pulido.",
+    "preparation": "Ninguna especial. Se recomienda cepillado normal antes de la cita.",
+    "aftercare": "Evitar alimentos pigmentantes por 24 horas. Posible sensibilidad leve temporal.",
+    "priceRange": { "min": 600, "max": 1200, "currency": "MXN" },
+    "tags": ["limpieza", "profilaxis", "preventivo"]
+  },
+  {
+    "id": "proc-002",
+    "category": "procedure",
+    "name": "Resina Dental (Obturación)",
+    "durationMinutes": 40,
+    "description": "Restauración de diente afectado por caries usando composite fotocurable del color del diente.",
+    "preparation": "Ninguna. Se aplica anestesia local durante el procedimiento.",
+    "aftercare": "No comer hasta que pase el efecto de la anestesia (2-3 horas). Evitar alimentos duros por 24 horas.",
+    "priceRange": { "min": 800, "max": 1800, "currency": "MXN" },
+    "tags": ["resina", "obturación", "caries", "restauración"]
+  },
+  {
+    "id": "proc-003",
+    "category": "procedure",
+    "name": "Extracción Dental Simple",
+    "durationMinutes": 30,
+    "description": "Remoción de un diente erupcionado que no requiere cirugía.",
+    "preparation": "Ayuno de 4 horas si se usa sedación consciente. Informar sobre medicamentos anticoagulantes.",
+    "aftercare": "Morder gasa por 30-45 min. No enjuagar ni escupir por 24h. Hielo externo intermitente. Analgésico según prescripción. No fumar ni usar popote por 72h.",
+    "priceRange": { "min": 1000, "max": 2500, "currency": "MXN" },
+    "tags": ["extracción", "exodoncia", "cirugía menor"]
+  }
+]

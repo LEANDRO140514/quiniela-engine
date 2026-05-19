@@ -1,0 +1,1212 @@
+{
+  "name": "Carga de archivos",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1j1kRaTF_MdHwV7Ggkvn_If18PXkO8flc",
+          "mode": "list",
+          "cachedResultName": "RAG PRODUCTOS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1j1kRaTF_MdHwV7Ggkvn_If18PXkO8flc"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        -160
+      ],
+      "id": "8d7ec228-c02f-4e60-b1c3-7a4443435aaa",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Qa9U5EgIiamLK3v5",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1j1kRaTF_MdHwV7Ggkvn_If18PXkO8flc",
+          "mode": "list",
+          "cachedResultName": "RAG PRODUCTOS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1j1kRaTF_MdHwV7Ggkvn_If18PXkO8flc"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        32
+      ],
+      "id": "d57c978d-88a6-4f02-9641-128022f317af",
+      "name": "Google Drive Trigger1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cRSdcIiSwEo8g7yg",
+          "name": "Demo IAbyIA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1152,
+        -96
+      ],
+      "id": "922f465d-0777-4ecc-8ca7-6b25d3b1fe3c",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Qa9U5EgIiamLK3v5",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        48
+      ],
+      "id": "c914824e-9114-47b4-a5cf-93fa6cc7d9cf",
+      "name": "Extract from File",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "type": "SHA256",
+        "value": "={{ $json.productos_string }}",
+        "dataPropertyName": "hash"
+      },
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -96
+      ],
+      "id": "a11b3ce0-bd2f-4f24-945e-2cc735b12b23",
+      "name": "Crypto"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "empty",
+                      "singleValue": true
+                    },
+                    "id": "5d12093f-bb63-426d-af2c-2997fba27a64"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Insertar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a64dc1da-36b6-4b92-902e-5d97a2dcbfba",
+                    "leftValue": "={{ $json.hash }}",
+                    "rightValue": "={{ $('Crypto').item.json.hash }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Duplicado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8a4a4d2c-1623-4017-ba3e-1616b4f65a9d",
+                    "leftValue": "={{ $json.hash }}",
+                    "rightValue": "={{ $('Crypto').item.json.hash }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Actualizar"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        544,
+        -112
+      ],
+      "id": "cd5cd020-44b8-48ba-9a23-8bfc4aef6a96",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bab1aa92-8b87-4ccf-9541-13d5b8aa2afc",
+              "name": "Producto",
+              "value": "={{ $json.CODIGO }} {{ $json.DESCRIPCION }} {{ $json.MONEDA }} {{ $json.PRECIO }} {{ $json['CODIGO RUBRO'] }} {{ $json['DESCRIPCION RUBRO'] }} {{ $json['CODIGO DE SUBRUBRO'] }} {{ $json['DESCRIPCION DE SUBRUBRO'] }} {{ $json.IVA }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -464,
+        -208
+      ],
+      "id": "b20c3e7b-0ab2-4f05-9764-df1b87308c93",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Code in JavaScript1').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        -96
+      ],
+      "id": "22a4054b-1ce4-4716-b1ac-52a508c527ef",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Qa9U5EgIiamLK3v5",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        0
+      ],
+      "id": "505d37a5-1e95-456b-bbd8-8c2e568a60a1",
+      "name": "Extract from File1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.name }}",
+                    "rightValue": "xlsx",
+                    "operator": {
+                      "type": "string",
+                      "operation": "endsWith"
+                    },
+                    "id": "2a0d1879-722b-47dd-9ed7-1399ebf151f7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "XLSX"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b7ab63ec-c7b2-4ae9-b9bb-23f970f8d31a",
+                    "leftValue": "={{ $json.name }}",
+                    "rightValue": "csv",
+                    "operator": {
+                      "type": "string",
+                      "operation": "endsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CSV"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -944,
+        -96
+      ],
+      "id": "a4f32fb1-5f23-4c87-a125-5da3da2f888a",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -208
+      ],
+      "id": "8eb11e00-10b4-436d-b6e8-b0db53d739c0",
+      "name": "Extract from File2",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bab1aa92-8b87-4ccf-9541-13d5b8aa2afc",
+              "name": "Producto",
+              "value": "={{ $json.CODIGO }} {{ $json.DESCRIPCION }} {{ $json.MONEDA }} {{ $json.PRECIO }} {{ $json['CODIGO RUBRO'] }} {{ $json['DESCRIPCION RUBRO'] }} {{ $json['DESCRIPCION RUBRO'] }} {{ $json['CODIGO DE SUBRUBRO'] }} {{ $json['DESCRIPCION DE SUBRUBRO'] }} {{ $json.IVA }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -464,
+        48
+      ],
+      "id": "00eacc09-7e92-45c0-9e4b-b3041ed8828b",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1) Tomar todos los items en el orden original\nconst items = $items();\n\n// 2) Construir el array espejo de la entrada\nconst arr = items.map(i => ({ Producto: i.json?.Producto }));\n\n// 3) Serializar tal cual (sin normalizar ni reordenar)\nconst productos_string = JSON.stringify(arr);\n\n// 4) Variables adicionales del nodo \"Download file\"\nconst dl = $(\"Download file\").first();\nconst name = dl?.json?.name;\nconst id = dl?.json?.id;\n\n// 5) Output consolidado\nreturn [{\n  json: {\n    productos_string,\n    name,\n    id\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -96
+      ],
+      "id": "d74a5670-94bb-4f90-b31c-75987ef3163c",
+      "name": "Code in JavaScript1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        -160
+      ],
+      "id": "af4e8c9b-895a-4059-9a6b-a1378cdc2b03",
+      "name": "Extract from File3",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.nombre_archivo }}",
+                    "rightValue": "xlsx",
+                    "operator": {
+                      "type": "string",
+                      "operation": "endsWith"
+                    },
+                    "id": "2a0d1879-722b-47dd-9ed7-1399ebf151f7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "XLSX"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b7ab63ec-c7b2-4ae9-b9bb-23f970f8d31a",
+                    "leftValue": "={{ $json.nombre_archivo }}",
+                    "rightValue": "csv",
+                    "operator": {
+                      "type": "string",
+                      "operation": "endsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CSV"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1376,
+        -96
+      ],
+      "id": "cc835075-b637-44e7-a9ea-35e229159ccf",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ae13a778-a9ca-43a0-a844-d1b19e629711",
+              "name": "CODIGO",
+              "value": "={{ $json.CODIGO }}",
+              "type": "string"
+            },
+            {
+              "id": "bfa8c6b8-7493-4b07-b726-8d3568def707",
+              "name": "DESCRIPCION",
+              "value": "={{ $json.DESCRIPCION }}",
+              "type": "string"
+            },
+            {
+              "id": "8b20a7ee-550b-4e8e-a267-657eec2fc03e",
+              "name": "MONEDA",
+              "value": "={{ $json.MONEDA }}",
+              "type": "string"
+            },
+            {
+              "id": "0efda3a9-9e4d-4b30-9523-4219ceff82dc",
+              "name": "PRECIO",
+              "value": "={{ $json.PRECIO }}",
+              "type": "string"
+            },
+            {
+              "id": "3874cd00-33bc-4af7-83bc-0135d568d723",
+              "name": "CODIGO RUBRO",
+              "value": "={{ $json['CODIGO RUBRO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ad33fce0-c03e-4a95-bfb7-313e58655667",
+              "name": "DESCRIPCION RUBRO",
+              "value": "={{ $json['DESCRIPCION RUBRO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7bf41b08-3df1-4609-9fdf-7ad56396b2c0",
+              "name": "CODIGO DE SUBRUBRO",
+              "value": "={{ $json['CODIGO DE SUBRUBRO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "881f270f-22d9-4d8b-b64b-55b4ae68a0c9",
+              "name": "DESCRIPCION DE SUBRUBRO",
+              "value": "={{ $json['DESCRIPCION DE SUBRUBRO'] }}",
+              "type": "string"
+            },
+            {
+              "id": "12526352-bd9e-41dd-8703-16349b8e3752",
+              "name": "IVA",
+              "value": "={{ $json.IVA }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1872,
+        -96
+      ],
+      "id": "0bb19b7f-8d9d-4b79-9c4e-63b9fd7fe053",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        816,
+        -96
+      ],
+      "id": "2155b142-50b7-44b3-af8d-982ff0a1ef9f",
+      "name": "Hacer Notificacion Duplicado"
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "productos",
+          "mode": "list",
+          "cachedResultName": "productos"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        720,
+        80
+      ],
+      "id": "b5e00d72-e3d7-4b84-ae64-c132a86ea660",
+      "name": "Delete table or rows",
+      "credentials": {
+        "postgres": {
+          "id": "AP95eP5MTWLIqiUG",
+          "name": "Postgres Nativo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "productos",
+          "mode": "list",
+          "cachedResultName": "productos"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "IVA": "={{ $json.IVA }}",
+            "CODIGO": "={{ $json.CODIGO }}",
+            "DESCRIPCION": "={{ $json.DESCRIPCION }}",
+            "MONEDA": "={{ $json.MONEDA }}",
+            "PRECIO": "={{ $json.PRECIO }}",
+            "CODIGO RUBRO": "={{ $json['CODIGO RUBRO'] }}",
+            "DESCRIPCION RUBRO": "={{ $json['DESCRIPCION RUBRO'] }}",
+            "CODIGO DE SUBRUBRO": "={{ $json['CODIGO DE SUBRUBRO'] }}",
+            "DESCRIPCION DE SUBRUBRO": "={{ $json['DESCRIPCION DE SUBRUBRO'] }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CODIGO",
+              "displayName": "CODIGO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DESCRIPCION",
+              "displayName": "DESCRIPCION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "MONEDA",
+              "displayName": "MONEDA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PRECIO",
+              "displayName": "PRECIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CODIGO RUBRO",
+              "displayName": "CODIGO RUBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DESCRIPCION RUBRO",
+              "displayName": "DESCRIPCION RUBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CODIGO DE SUBRUBRO",
+              "displayName": "CODIGO DE SUBRUBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DESCRIPCION DE SUBRUBRO",
+              "displayName": "DESCRIPCION DE SUBRUBRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "IVA",
+              "displayName": "IVA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2064,
+        -96
+      ],
+      "id": "aac83b46-9365-43c6-a2c4-604083b8c92d",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "AP95eP5MTWLIqiUG",
+          "name": "Postgres Nativo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Archivo DB Inventario",
+          "mode": "list",
+          "cachedResultName": "Archivo DB Inventario"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "nombre_archivo",
+              "value": "={{ $json.name }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        336,
+        -96
+      ],
+      "id": "a924d76b-5125-4d43-a455-c3dcf7ac017f",
+      "name": "Select rows from a table",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "AP95eP5MTWLIqiUG",
+          "name": "Postgres Nativo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Archivo DB Inventario",
+          "mode": "list",
+          "cachedResultName": "Archivo DB Inventario"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre_archivo": "={{ $('Code in JavaScript1').item.json.name }}",
+            "hash": "={{ $('Crypto').item.json.hash }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nombre_archivo",
+              "displayName": "nombre_archivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hash",
+              "displayName": "hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        816,
+        -256
+      ],
+      "id": "6155efd4-9ba7-4212-858d-4d8aae99fc16",
+      "name": "Insert rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "AP95eP5MTWLIqiUG",
+          "name": "Postgres Nativo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Archivo DB Inventario",
+          "mode": "list",
+          "cachedResultName": "Archivo DB Inventario"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre_archivo": "={{ $('Crypto').item.json.name }}",
+            "hash": "={{ $('Crypto').item.json.hash }}"
+          },
+          "matchingColumns": [
+            "nombre_archivo"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nombre_archivo",
+              "displayName": "nombre_archivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "hash",
+              "displayName": "hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        928,
+        80
+      ],
+      "id": "442754b7-f665-4e1f-9bfd-dedb40f5d9f1",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "AP95eP5MTWLIqiUG",
+          "name": "Postgres Nativo"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crypto": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hacer Notificacion Duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete table or rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Crypto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Extract from File3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete table or rows": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table1": {
+      "main": [
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cf847a66-0815-4c1b-b01e-1b36fd9cfc69",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "y4NEP0GilNLGgeP6",
+  "tags": []
+}

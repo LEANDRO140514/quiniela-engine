@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "verticals/dental/schemas/appointment.schema.json",
+  "title": "Appointment",
+  "description": "Cita dental agendada en el sistema",
+  "type": "object",
+  "required": ["id", "patientId", "dateTime", "procedureId", "status"],
+  "properties": {
+    "id": { "type": "string" },
+    "patientId": { "type": "string" },
+    "dateTime": { "type": "string", "format": "date-time" },
+    "procedureId": { "type": "string" },
+    "doctorId": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["scheduled", "confirmed", "in-progress", "completed", "cancelled", "no-show"]
+    },
+    "notes": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

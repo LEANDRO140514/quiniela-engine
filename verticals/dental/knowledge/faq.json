@@ -1,0 +1,23 @@
+[
+  {
+    "id": "faq-001",
+    "category": "faq",
+    "question": "¿Cuáles son sus horarios de atención?",
+    "answer": "Nuestro horario es de lunes a viernes de 9:00 a 19:00 y sábados de 9:00 a 14:00.",
+    "tags": ["horario", "atención", "disponibilidad"]
+  },
+  {
+    "id": "faq-002",
+    "category": "faq",
+    "question": "¿Aceptan tarjetas de crédito?",
+    "answer": "Sí, aceptamos Visa, Mastercard y American Express. También tenemos planes de financiamiento para tratamientos mayores.",
+    "tags": ["pago", "tarjeta", "financiamiento"]
+  },
+  {
+    "id": "faq-003",
+    "category": "faq",
+    "question": "¿Cuánto dura una limpieza dental?",
+    "answer": "Una limpieza dental profesional dura aproximadamente 45 minutos a 1 hora.",
+    "tags": ["limpieza", "profilaxis", "duración"]
+  }
+]

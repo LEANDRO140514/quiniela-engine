@@ -1,0 +1,91 @@
+{
+  "vertical": "dental",
+  "description": "Políticas de handoff AI→humano para Sarah Dental Receptionist",
+  "rules": [
+    {
+      "id": "hpol-001",
+      "name": "Legal Mention",
+      "priority": 1,
+      "conditions": [
+        { "field": "keyword", "operator": "contains", "value": ["demanda", "abogado", "mala praxis", "demandar", "negligencia"] }
+      ],
+      "target": { "type": "human", "id": "directora-clinica", "name": "Directora Clínica" },
+      "cooldownMs": 0,
+      "enabled": true
+    },
+    {
+      "id": "hpol-002",
+      "name": "Critical Emergency",
+      "priority": 2,
+      "conditions": [
+        { "field": "escalationLevel", "operator": "equals", "value": "critical" }
+      ],
+      "target": { "type": "human", "id": "recepcionista-senior", "name": "Recepcionista Senior" },
+      "cooldownMs": 0,
+      "enabled": true
+    },
+    {
+      "id": "hpol-003",
+      "name": "High Urgency",
+      "priority": 3,
+      "conditions": [
+        { "field": "escalationLevel", "operator": "equals", "value": "high" }
+      ],
+      "target": { "type": "human", "id": "recepcionista-turno", "name": "Recepcionista en Turno" },
+      "cooldownMs": 300000,
+      "enabled": true
+    },
+    {
+      "id": "hpol-004",
+      "name": "Explicit Human Request",
+      "priority": 4,
+      "conditions": [
+        { "field": "keyword", "operator": "contains", "value": ["humano", "persona", "gerente", "encargado", "hablar con alguien"] }
+      ],
+      "target": { "type": "human", "id": "recepcionista-turno", "name": "Recepcionista en Turno" },
+      "cooldownMs": 60000,
+      "enabled": true
+    },
+    {
+      "id": "hpol-005",
+      "name": "Knowledge Gap",
+      "priority": 5,
+      "conditions": [
+        { "field": "intent", "operator": "equals", "value": "unknown" }
+      ],
+      "target": { "type": "human", "id": "recepcionista-turno", "name": "Recepcionista en Turno" },
+      "cooldownMs": 300000,
+      "enabled": true
+    },
+    {
+      "id": "hpol-006",
+      "name": "Outside Business Hours",
+      "priority": 6,
+      "conditions": [
+        { "field": "timeOfDay", "operator": "gte", "value": "19:00" }
+      ],
+      "target": { "type": "human", "id": "recepcionista-guardia", "name": "Recepcionista de Guardia" },
+      "cooldownMs": 300000,
+      "enabled": false
+    },
+    {
+      "id": "hpol-007",
+      "name": "Sentiment Frustration",
+      "priority": 7,
+      "conditions": [
+        { "field": "sentiment", "operator": "equals", "value": "negative" }
+      ],
+      "target": { "type": "human", "id": "recepcionista-turno", "name": "Recepcionista en Turno" },
+      "cooldownMs": 300000,
+      "enabled": true
+    }
+  ],
+  "targets": [
+    { "type": "human", "id": "directora-clinica", "name": "Directora Clínica", "channels": [{ "channel": "whatsapp", "address": "+5215500000001", "priority": 1 }] },
+    { "type": "human", "id": "recepcionista-senior", "name": "Recepcionista Senior", "channels": [{ "channel": "whatsapp", "address": "+5215500000002", "priority": 1 }] },
+    { "type": "human", "id": "recepcionista-turno", "name": "Recepcionista en Turno", "channels": [{ "channel": "whatsapp", "address": "+5215500000003", "priority": 1 }, { "channel": "web", "address": "web-chat", "priority": 2 }] },
+    { "type": "human", "id": "recepcionista-guardia", "name": "Recepcionista de Guardia", "channels": [{ "channel": "whatsapp", "address": "+5215500000004", "priority": 1 }] }
+  ],
+  "defaultTimeoutMs": 300000,
+  "maxQueueSize": 10
+}

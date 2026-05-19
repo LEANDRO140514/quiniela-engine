@@ -1,0 +1,25 @@
+{
+  "domain": "calendar",
+  "title": "Calendar Workflows",
+  "description": "Blueprints relacionados con gestión de citas, disponibilidad, horarios, cancelaciones, modificaciones y recordatorios. Incluye sub-workflows atómicos por operación y el agente definitivo que los orquesta.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "calendar-engine",
+    "workflow-orchestrator"
+  ],
+  "providersObserved": [
+    "google-calendar",
+    "openai",
+    "chatwoot"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Estos workflows deben usarse como especificación funcional viva para extraer reglas, estados, inputs, outputs y edge cases. Google Calendar es el adapter actual; el engine debe ser agnóstico al proveedor."
+}

@@ -1,0 +1,50 @@
+{
+  "vertical": "dental",
+  "description": "Políticas de calendario y agendamiento para Clínica Dental Curdeeclau",
+  "slotDurationMinutes": 30,
+  "minAdvanceHours": 2,
+  "maxAdvanceDays": 60,
+  "cancellationPolicyHours": 24,
+  "cancellationFeeMXN": 300,
+  "noShowFeeMXN": 300,
+  "overbooking": {
+    "enabled": false,
+    "maxOverbookPercent": 0
+  },
+  "bufferBetweenAppointmentsMinutes": 10,
+  "doctorPreferences": [
+    {
+      "doctorId": "dra-maria-gonzalez",
+      "name": "Dra. María González",
+      "specialty": "general-dentistry",
+      "maxAppointmentsPerDay": 12,
+      "preferredProcedureTypes": ["consulta", "resina", "corona", "extraccion-simple"],
+      "unavailableDates": []
+    },
+    {
+      "doctorId": "dr-carlos-ruiz",
+      "name": "Dr. Carlos Ruiz",
+      "specialty": "orthodontics",
+      "maxAppointmentsPerDay": 8,
+      "preferredProcedureTypes": ["ortodoncia-brackets", "ortodoncia-invisible", "consulta-ortodoncia"],
+      "unavailableDates": []
+    },
+    {
+      "doctorId": "dra-ana-lopez",
+      "name": "Dra. Ana López",
+      "specialty": "pediatric-dentistry",
+      "maxAppointmentsPerDay": 10,
+      "preferredProcedureTypes": ["consulta-infantil", "limpieza-infantil", "resina-infantil", "fluor"],
+      "unavailableDates": []
+    }
+  ],
+  "autoConfirm": true,
+  "reminders": {
+    "enabled": true,
+    "schedule": [
+      { "timing": "24h_before", "channel": "whatsapp" },
+      { "timing": "2h_before", "channel": "whatsapp" }
+    ],
+    "messageTemplate": "Hola {patientName}, recordatorio de su cita con {doctorName} el {date} a las {time}. Para cancelar o reagendar responda a este mensaje."
+  }
+}

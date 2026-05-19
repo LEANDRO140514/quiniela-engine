@@ -1,0 +1,463 @@
+{
+  "name": "Lovable",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e16caef5-6054-4468-94cc-e32feaea389f",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "58f5d1e3-11a6-4159-a676-fbbfc30ea824",
+      "name": "Webhook",
+      "webhookId": "e16caef5-6054-4468-94cc-e32feaea389f"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje:  {{ $json.body.message }}",
+        "options": {
+          "systemMessage": "=# Rol\nSos un agente especializado en gestionar **leads y oportunidades de venta**.  \nPodés usar **herramientas conectadas** para **actualizar** o **crear registros** en una hoja de Google Sheets llamada **\"Tabla 1\"** con estas columnas:\n\n- **id**  \n- **Empresa**  \n- **Contacto**  \n- **Prioridad**  \n- **EtapaPipeline**  \n- **ProximoContacto**  \n- **ValorEstimado(USD)**  \n- **Canal**  \n- **Owner**\n\n---\n\n## Capacidades principales\n\n1. **Modificar registros existentes** usando \"Contacto\" como identificador.  \n   - Campos que podés modificar: `Prioridad`, `EtapaPipeline`, `ProximoContacto`, `ValorEstimado(USD)`, `Owner`.  \n   - Ejemplos:  \n     - \"A Diego Torres cambiale la etapa a Negociación.\"  \n     - \"Actualizá el próximo contacto de Lucía Gómez para el 2025-10-05.\"\n\n2. **Crear nuevos registros** cuando el usuario lo solicite.  \n   - Campos necesarios: `Empresa`, `Contacto`, `Prioridad`, `EtapaPipeline`, `Canal`, `Owner`.  \n   - Campos opcionales: `ProximoContacto` (formato YYYY-MM-DD), `ValorEstimado(USD)`.  \n   - Ejemplo:  \n     \"Agregá un nuevo lead: Empresa NovaTech, contacto Sofía Ruiz, prioridad Alta, etapa Nuevo, canal Outbound, owner Valentina, próximo contacto 2025-10-15, valor 8000.\"\n\n---\n\n## Herramientas\n\n- **Actualizar**: para modificar registros existentes (vía `update:sheet`). Requiere:  \n  - `Contacto` (para encontrar la fila)  \n  - Cualquier campo a modificar: `Prioridad`, `EtapaPipeline`, `ProximoContacto`, `ValorEstimado(USD)`, `Owner`.\n\n- **Crear**: para crear un nuevo registro (vía `append:sheet`). Requiere:  \n  - `Empresa` (obligatorio)  \n  - `Contacto` (obligatorio)  \n  - `Prioridad` (obligatorio, valores: Alta, Media, Baja)  \n  - `EtapaPipeline` (obligatorio, valores: Nuevo, Calificado, Demo agendada, Negociación, Ganado)  \n  - `Canal` (obligatorio, valores: Orgánico, Outbound, Inbound, Referido)  \n  - `Owner` (obligatorio, valores: Ignacio, Valentina, Delfina, Santiago)  \n  - `ProximoContacto` (opcional, formato YYYY-MM-DD)  \n  - `ValorEstimado(USD)` (opcional, número)\n\n---\n\n## Instrucciones\n\n1. Leé cuidadosamente la instrucción del usuario.  \n2. Extraé las variables relevantes (Contacto, EtapaPipeline, ProximoContacto, etc.).  \n3. Llamá a la **herramienta correcta** con esas variables:  \n   - Usa `Crear` → `append:sheet` para nuevos registros.  \n   - Usa `Actualizar` → `update:sheet` para modificar existentes.  \n4. Luego de usar la herramienta, **respondé siempre** al usuario con una confirmación breve y clara:  \n   - \"Listo ✅, la etapa de Diego Torres fue cambiada a Negociación.\"  \n   - \"Perfecto ✅, creé el lead de Sofía Ruiz con prioridad Alta y owner Valentina.\"\n\n---\n\n## Restricciones\n\n- Nunca inventes valores. Si falta información esencial para `Crear`, pedila al usuario.  \n- Si el `Contacto` no coincide con ningún registro, pedí confirmación en lugar de inventar.  \n- Respondé **siempre en español**.  \n- No muestres al usuario el formato interno de las herramientas (`append:sheet`, `update:sheet`), solo la confirmación.\n\n---\n\n## Ejemplos\n\n**Usuario:** \"Cambia la etapa de Ana Díaz a Ganado.\"  \n**Acción interna:** Llamar a `Actualizar` → `update:sheet` con `{Contacto: \"Ana Díaz\", EtapaPipeline: \"Ganado\"}`.  \n**Respuesta al usuario:** \"Hecho ✅, la etapa de Ana Díaz ahora es Ganado.\"\n\n---\n\n**Usuario:** \"Agregá un nuevo lead: Empresa Quantum CX, contacto Julieta Sosa, prioridad Alta, etapa Demo agendada, canal Inbound, owner Delfina, próximo contacto 2025-10-10, valor 12000.\"  \n**Acción interna:** Llamar a `Crear` → `append:sheet` con todos los valores.  \n**Respuesta al usuario:** \"Lead creado ✅: Julieta Sosa (Quantum CX), etapa Demo agendada, owner Delfina.\"\n\n---\n\n## Notas importantes:\n- Recordá enviar la variable `\"Contacto\"` a la herramienta **Actualizar**"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8e9d7090-09f7-4c30-8529-0c698ca116c0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "presencePenalty": 0,
+          "temperature": 0.1,
+          "topP": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        208
+      ],
+      "id": "b8428d30-42e7-4707-b3fc-e4b23c362f8c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rTSt6FnagO3Pruoq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.user_session }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "25644811-d964-43dc-b389-7624996c2f27",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "16lz5QUn-HVJVdmiqbwXzlNeompcb-hqoFMVgJW_e7p4",
+          "mode": "list",
+          "cachedResultName": "Tabla Lovable",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16lz5QUn-HVJVdmiqbwXzlNeompcb-hqoFMVgJW_e7p4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1055415636,
+          "mode": "list",
+          "cachedResultName": "Tabla Lovable",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16lz5QUn-HVJVdmiqbwXzlNeompcb-hqoFMVgJW_e7p4/edit#gid=1055415636"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "CREADO",
+            "Empresa": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Empresa', ``, 'string') }}",
+            "Contacto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Contacto', ``, 'string') }}",
+            "Prioridad": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prioridad', ``, 'string') }}",
+            "EtapaPipeline": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('EtapaPipeline', ``, 'string') }}",
+            "ProximoContacto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ProximoContacto', ``, 'string') }}",
+            "ValorEstimado(USD)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ValorEstimado_USD_', ``, 'string') }}",
+            "Canal": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Canal', ``, 'string') }}",
+            "Owner": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Owner', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contacto",
+              "displayName": "Contacto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "EtapaPipeline",
+              "displayName": "EtapaPipeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ProximoContacto",
+              "displayName": "ProximoContacto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ValorEstimado(USD)",
+              "displayName": "ValorEstimado(USD)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Canal",
+              "displayName": "Canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Owner",
+              "displayName": "Owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        208
+      ],
+      "id": "00c65325-d4cc-4b8e-aa16-96e9cb38066e",
+      "name": "Crear",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Actualizar datos de los leads",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "16lz5QUn-HVJVdmiqbwXzlNeompcb-hqoFMVgJW_e7p4",
+          "mode": "list",
+          "cachedResultName": "Tabla Lovable",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16lz5QUn-HVJVdmiqbwXzlNeompcb-hqoFMVgJW_e7p4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1055415636,
+          "mode": "list",
+          "cachedResultName": "Tabla Lovable",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16lz5QUn-HVJVdmiqbwXzlNeompcb-hqoFMVgJW_e7p4/edit#gid=1055415636"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Contacto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Contacto', ``, 'string') }}",
+            "ValorEstimado(USD)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ValorEstimado_USD_', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Contacto"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Contacto",
+              "displayName": "Contacto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "EtapaPipeline",
+              "displayName": "EtapaPipeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ProximoContacto",
+              "displayName": "ProximoContacto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ValorEstimado(USD)",
+              "displayName": "ValorEstimado(USD)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Canal",
+              "displayName": "Canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Owner",
+              "displayName": "Owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        528,
+        208
+      ],
+      "id": "ade27393-7b40-42c9-8dca-e5976e47391d",
+      "name": "Actualizar",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        0
+      ],
+      "id": "324e9bc7-6d18-44df-a543-dc934164ed42",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8dfec69e-5845-4353-a3fc-ebeb11feb9ea",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "enuSbb9MuDXLYz8d",
+  "tags": []
+}

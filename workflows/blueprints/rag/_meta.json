@@ -1,0 +1,25 @@
+{
+  "domain": "rag",
+  "title": "RAG (Retrieval-Augmented Generation) Workflows",
+  "description": "Blueprints de pipeline RAG completo: ingesta de documentos (chunking + embedding + almacenamiento) y retrieval semántico para augmentar respuestas del LLM con conocimiento privado del negocio.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "knowledge-engine",
+    "rag-engine",
+    "workflow-orchestrator"
+  ],
+  "providersObserved": [
+    "qdrant",
+    "openai"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Qdrant es el adapter actual de vector store. El engine debe ser agnóstico: pgvector (Supabase), Pinecone o Weaviate son futuros adapters. Los parámetros de chunking (size, overlap) y retrieval (top_k, score_threshold) son configuración del engine, no constantes."
+}

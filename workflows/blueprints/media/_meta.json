@@ -1,0 +1,24 @@
+{
+  "domain": "media",
+  "title": "Media Delivery Workflows",
+  "description": "Blueprints para envío y procesamiento de archivos multimedia (imágenes, documentos, audio) en canales de mensajería. Incluye envío de fotos y agente multimodal con visión.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "media-delivery-engine"
+  ],
+  "providersObserved": [
+    "chatwoot",
+    "openai",
+    "telegram"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "El patrón de envío de media es dependiente del canal (Chatwoot, WhatsApp, Telegram). El engine debe abstraer la entrega y manejar formatos y límites por canal."
+}

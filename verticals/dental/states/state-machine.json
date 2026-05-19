@@ -1,0 +1,119 @@
+{
+  "id": "sarah-dental-state-machine",
+  "vertical": "dental",
+  "version": "0.1.0",
+  "description": "Máquina de estados para Sarah — recepcionista virtual dental",
+  "initialState": "idle",
+  "states": [
+    {
+      "name": "idle",
+      "description": "Esperando interacción del paciente",
+      "transitions": [
+        { "event": "message_received", "target": "classifying" },
+        { "event": "appointment_reminder_due", "target": "sending_reminder" }
+      ]
+    },
+    {
+      "name": "classifying",
+      "description": "Clasificando intención del mensaje entrante",
+      "transitions": [
+        { "event": "intent_detected", "target": "routing" },
+        { "event": "classification_failed", "target": "escalating" }
+      ]
+    },
+    {
+      "name": "routing",
+      "description": "Enrutando a workflow según intención",
+      "transitions": [
+        { "event": "route_to_faq", "target": "answering_faq" },
+        { "event": "route_to_scheduling", "target": "scheduling" },
+        { "event": "route_to_emergency", "target": "emergency_triage" },
+        { "event": "route_to_handoff", "target": "escalating" },
+        { "event": "route_to_treatment_info", "target": "treatment_inquiry" }
+      ]
+    },
+    {
+      "name": "answering_faq",
+      "description": "Respondiendo pregunta frecuente desde knowledge base",
+      "transitions": [
+        { "event": "answer_found", "target": "responding" },
+        { "event": "answer_not_found", "target": "escalating" }
+      ]
+    },
+    {
+      "name": "scheduling",
+      "description": "Flujo de agendamiento de cita",
+      "transitions": [
+        { "event": "slot_selected", "target": "confirming_appointment" },
+        { "event": "no_availability", "target": "offering_alternatives" },
+        { "event": "patient_cancels", "target": "idle" }
+      ]
+    },
+    {
+      "name": "confirming_appointment",
+      "description": "Confirmando cita agendada y enviando recordatorio",
+      "transitions": [
+        { "event": "confirmed", "target": "idle" },
+        { "event": "confirmation_failed", "target": "scheduling" }
+      ]
+    },
+    {
+      "name": "emergency_triage",
+      "description": "Triaje de urgencia dental según protocolo",
+      "transitions": [
+        { "event": "critical_emergency", "target": "escalating" },
+        { "event": "urgent_scheduled", "target": "confirming_appointment" },
+        { "event": "non_urgent", "target": "scheduling" }
+      ]
+    },
+    {
+      "name": "treatment_inquiry",
+      "description": "Respondiendo consulta sobre tratamiento dental",
+      "transitions": [
+        { "event": "info_provided", "target": "offering_appointment" },
+        { "event": "info_not_found", "target": "escalating" }
+      ]
+    },
+    {
+      "name": "offering_appointment",
+      "description": "Ofreciendo agendar cita post-consulta",
+      "transitions": [
+        { "event": "patient_accepts", "target": "scheduling" },
+        { "event": "patient_declines", "target": "idle" }
+      ]
+    },
+    {
+      "name": "offering_alternatives",
+      "description": "Ofreciendo horarios o doctores alternativos",
+      "transitions": [
+        { "event": "alternative_accepted", "target": "confirming_appointment" },
+        { "event": "all_alternatives_rejected", "target": "escalating" }
+      ]
+    },
+    {
+      "name": "sending_reminder",
+      "description": "Enviando recordatorio de cita programada",
+      "transitions": [
+        { "event": "reminder_sent", "target": "idle" },
+        { "event": "reminder_failed", "target": "idle" }
+      ]
+    },
+    {
+      "name": "responding",
+      "description": "Entregando respuesta al paciente",
+      "transitions": [
+        { "event": "response_delivered", "target": "idle" },
+        { "event": "patient_follows_up", "target": "classifying" }
+      ]
+    },
+    {
+      "name": "escalating",
+      "description": "Escalando a recepcionista humano según reglas de handoff",
+      "transitions": [
+        { "event": "human_accepted", "target": "idle" },
+        { "event": "human_timeout", "target": "idle" },
+        { "event": "critical_escalation", "target": "idle" }
+      ]
+    }
+  ]
+}

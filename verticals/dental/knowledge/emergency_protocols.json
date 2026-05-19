@@ -1,0 +1,62 @@
+[
+  {
+    "id": "emerg-001",
+    "category": "emergency",
+    "title": "Dolor Dental Agudo",
+    "severity": "high",
+    "symptoms": ["dolor pulsátil", "inflamación visible", "sensibilidad extrema al tacto"],
+    "immediateActions": [
+      "Agendar cita de urgencia dentro de las próximas 4 horas",
+      "Recomendar hielo externo en la zona 15 min sí / 15 min no",
+      "NO recomendar aspirina directa en la encía",
+      "Sugerir ibuprofeno 400-600 mg si el paciente no tiene contraindicaciones"
+    ],
+    "escalationRule": "Si hay fiebre > 38°C o inflamación que dificulta respirar/tragar → derivar a urgencias hospitalarias",
+    "tags": ["dolor", "urgencia", "inflamación", "analgésico"]
+  },
+  {
+    "id": "emerg-002",
+    "category": "emergency",
+    "title": "Fractura Dental por Trauma",
+    "severity": "high",
+    "symptoms": ["diente roto visible", "sangrado", "dolor agudo", "movilidad dental"],
+    "immediateActions": [
+      "Agendar cita de urgencia dentro de las próximas 2 horas",
+      "Si hay fragmento: conservarlo en leche o solución salina",
+      "Enjuagar con agua tibia sin frotar",
+      "Aplicar gasa estéril con presión suave si hay sangrado"
+    ],
+    "escalationRule": "Si hay pérdida de conciencia o sangrado incontrolable → derivar a urgencias hospitalarias inmediatamente",
+    "tags": ["fractura", "trauma", "urgencia", "avulsión"]
+  },
+  {
+    "id": "emerg-003",
+    "category": "emergency",
+    "title": "Alveolitis Seca (Post-Extracción)",
+    "severity": "medium",
+    "symptoms": ["dolor intenso 48-72h post-extracción", "mal sabor", "hueso expuesto visible", "mal aliento"],
+    "immediateActions": [
+      "Agendar cita de revisión en las próximas 24 horas",
+      "Enjuagues con clorhexidina 0.12% si fue prescrita",
+      "Evitar enjuagues vigorosos",
+      "Analgésico según prescripción previa"
+    ],
+    "escalationRule": "Si el dolor no cede con analgésicos prescritos → adelantar cita a mismo día",
+    "tags": ["alveolitis", "post-extracción", "dolor", "complicación"]
+  },
+  {
+    "id": "emerg-004",
+    "category": "emergency",
+    "title": "Absceso Dental",
+    "severity": "critical",
+    "symptoms": ["inflamación facial visible", "fiebre", "dolor pulsátil intenso", "dificultad para abrir la boca", "mal sabor"],
+    "immediateActions": [
+      "Agendar cita de urgencia el mismo día",
+      "NO aplicar calor en la zona",
+      "Enjuagues con agua salina tibia",
+      "Si hay fiebre > 38.5°C recomendar valoración médica inmediata"
+    ],
+    "escalationRule": "Inflamación que compromete vía aérea o se extiende al cuello → URGENCIAS HOSPITALARIAS INMEDIATO",
+    "tags": ["absceso", "infección", "fiebre", "crítico"]
+  }
+]

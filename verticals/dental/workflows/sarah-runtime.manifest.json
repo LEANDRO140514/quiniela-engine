@@ -1,0 +1,61 @@
+{
+  "id": "sarah-runtime-manifest",
+  "name": "Sarah Dental Runtime — Plataform Alignment",
+  "vertical": "dental",
+  "version": "0.1.0",
+  "description": "Manifiesto de runtime que mapea workflows de Sarah a los engines de Algorithmus Platform",
+  "engines": {
+    "knowledge": { "package": "@curdeeclau/knowledge-engine", "status": "active", "phase": 2 },
+    "messageBuffer": { "package": "@curdeeclau/message-buffer-engine", "status": "placeholder", "phase": 2 },
+    "handoff": { "package": "@curdeeclau/handoff-engine", "status": "placeholder", "phase": 2 },
+    "calendar": { "package": "@curdeeclau/calendar-engine", "status": "placeholder", "phase": 2 },
+    "mediaDelivery": { "package": "@curdeeclau/media-delivery-engine", "status": "placeholder", "phase": 2 },
+    "ghl": { "package": "@curdeeclau/ghl-engine", "status": "placeholder", "phase": 2 },
+    "orchestrator": { "package": "@curdeeclau/workflow-orchestrator", "status": "placeholder", "phase": 2 }
+  },
+  "workflows": [
+    {
+      "id": "wf-new-patient",
+      "name": "Registro de Paciente Nuevo",
+      "enginesUsed": ["knowledge", "calendar", "messageBuffer", "ghl"],
+      "states": ["classifying", "scheduling", "confirming_appointment", "responding"],
+      "deterministicFirst": true
+    },
+    {
+      "id": "wf-emergency-triage",
+      "name": "Triaje de Urgencia Dental",
+      "enginesUsed": ["knowledge", "handoff", "messageBuffer"],
+      "states": ["classifying", "emergency_triage", "escalating", "responding"],
+      "deterministicFirst": true
+    },
+    {
+      "id": "wf-appointment-scheduling",
+      "name": "Agendamiento de Cita",
+      "enginesUsed": ["calendar", "messageBuffer", "ghl"],
+      "states": ["scheduling", "confirming_appointment", "offering_alternatives", "responding"],
+      "deterministicFirst": true
+    },
+    {
+      "id": "wf-treatment-inquiry",
+      "name": "Consulta de Información de Tratamiento",
+      "enginesUsed": ["knowledge", "mediaDelivery", "calendar"],
+      "states": ["treatment_inquiry", "offering_appointment", "responding", "escalating"],
+      "deterministicFirst": true
+    },
+    {
+      "id": "wf-reminder",
+      "name": "Recordatorio de Cita",
+      "enginesUsed": ["messageBuffer", "calendar"],
+      "states": ["sending_reminder", "idle"],
+      "deterministicFirst": true
+    },
+    {
+      "id": "wf-handoff",
+      "name": "Escalación a Humano",
+      "enginesUsed": ["handoff", "messageBuffer"],
+      "states": ["escalating", "idle"],
+      "deterministicFirst": true
+    }
+  ],
+  "principle": "Deterministic rules first. AI only when rules can't resolve."
+}

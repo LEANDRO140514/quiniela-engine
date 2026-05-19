@@ -1,0 +1,24 @@
+{
+  "domain": "message-buffer",
+  "title": "Message Buffer Workflows",
+  "description": "Blueprints de buffer de mensajes para consolidar múltiples eventos de canal en un solo payload antes de disparar el pipeline del agente. Evita respuestas fragmentadas cuando el usuario escribe en múltiples mensajes.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "message-buffer-engine",
+    "workflow-orchestrator"
+  ],
+  "providersObserved": [
+    "redis",
+    "n8n"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Redis es el adapter actual de buffer. El engine debe soportar TTL configurable, consolidación de media + texto, y fallback fail-open si el buffer no está disponible."
+}

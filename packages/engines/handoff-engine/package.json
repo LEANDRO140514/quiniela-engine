@@ -1,0 +1,21 @@
+{
+  "name": "@curdeeclau/handoff-engine",
+  "version": "0.2.0",
+  "private": true,
+  "description": "AI/Human Runtime Governance Layer — ownership, escalation, suppression, recovery",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@curdeeclau/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0",
+    "vitest": "^2.1.0"
+  }
+}

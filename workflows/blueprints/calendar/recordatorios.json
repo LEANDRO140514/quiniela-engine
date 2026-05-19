@@ -1,0 +1,738 @@
+{
+  "name": "Recordatorios",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $now }}",
+        "format": "custom",
+        "customFormat": "dd/MM/yyyy ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "17d1164f-fd58-4988-a27a-ace540bee7fd",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $now }}",
+        "format": "custom",
+        "customFormat": "dd/MM/yyyy ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        272,
+        448
+      ],
+      "id": "72b2b137-9e3b-4fb1-a7bc-897660aa0308",
+      "name": "Date & Time1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2a1c681a-dcb7-4cab-807a-253bcb8a2a6e",
+              "leftValue": "={{ $json.summary }}",
+              "rightValue": "🟢",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        912,
+        448
+      ],
+      "id": "0babc73f-3dea-403f-af4d-230d9afa42f0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $now }}",
+        "format": "custom",
+        "customFormat": "dd/MM/yyyy ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        272,
+        832
+      ],
+      "id": "22553b31-8e7e-46b9-8aac-73e0fc3586bc",
+      "name": "Date & Time2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst inputDate = item.json.formattedDate.trim();   // \"22/04/2025\"\n\n// --- 1. Parsear la fecha DD/MM/YYYY -----------------------------\nconst [day, month, year] = inputDate.split('/').map(Number); // → [22, 4, 2025]\n\n// --- 2. Construir un Date y sumarle 1 día -----------------------\nlet base = new Date(year, month - 1, day);          // mes = 0-based\nbase.setDate(base.getDate() + 1);                   // +1 día\n\n// --- 3. Helper para devolver ISO sin zona horaria --------------\nconst toISO = (d, hour) => {\n  // Creamos un Date en UTC para la hora pedida\n  const utc = new Date(Date.UTC(\n    d.getFullYear(),\n    d.getMonth(),\n    d.getDate(),\n    hour, 0, 0\n  ));\n  return utc.toISOString().slice(0, 19);            // YYYY-MM-DDTHH:MM:SS\n};\n\n// --- 4. Guardar resultados --------------------------------------\nitem.json.startDate = toISO(base, 8);   // 08:00:00\nitem.json.endDate   = toISO(base, 18);  // 18:00:00\n\nreturn [item];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "39f0d55b-d347-4967-a246-83f0e810f863",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "text": "=summary: {{ $json.summary }}\nfecha cita:{{ $json.start.dateTime }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Nombre",
+              "description": "Sólo el/los nombre/s, NUNCA incluir los apellidos",
+              "required": true
+            },
+            {
+              "name": "Telefono",
+              "description": "Telefono",
+              "required": true
+            },
+            {
+              "name": "Hora",
+              "description": "Solo la hora hh:mm",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        864,
+        0
+      ],
+      "id": "6a499aec-db03-4f27-ae93-f65b33fe7410",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        208
+      ],
+      "id": "1f87a91c-a39c-4282-b2ae-aec40310e9ce",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rTSt6FnagO3Pruoq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst inputDate = item.json.formattedDate.trim();   // \"22/04/2025\"\n\n// --- 1. Parsear la fecha DD/MM/YYYY -----------------------------\nconst [day, month, year] = inputDate.split('/').map(Number); // → [22, 4, 2025]\n\n// --- 2. Construir un Date y sumarle 1 día -----------------------\nlet base = new Date(year, month - 1, day);          // mes = 0-based\nbase.setDate(base.getDate() + 1);                   // +1 día\n\n// --- 3. Helper para devolver ISO sin zona horaria --------------\nconst toISO = (d, hour) => {\n  // Creamos un Date en UTC para la hora pedida\n  const utc = new Date(Date.UTC(\n    d.getFullYear(),\n    d.getMonth(),\n    d.getDate(),\n    hour, 0, 0\n  ));\n  return utc.toISOString().slice(0, 19);            // YYYY-MM-DDTHH:MM:SS\n};\n\n// --- 4. Guardar resultados --------------------------------------\nitem.json.startDate = toISO(base, 8);   // 08:00:00\nitem.json.endDate   = toISO(base, 18);  // 18:00:00\n\nreturn [item];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        448
+      ],
+      "id": "3c292446-d722-420d-948a-84adda13b6ca",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        640
+      ],
+      "id": "c0dd602b-3f73-49f6-ad9f-cee189cd17b3",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "rTSt6FnagO3Pruoq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst inputDate = item.json.formattedDate.trim();   // \"22/04/2025\"\n\n// --- 1. Parsear la fecha DD/MM/YYYY -----------------------------\nconst [day, month, year] = inputDate.split('/').map(Number); // → [22, 4, 2025]\n\n// --- 2. Construir un Date y sumarle 1 día -----------------------\nlet base = new Date(year, month - 1, day);          // mes = 0-based\nbase.setDate(base.getDate() + 1);                   // +1 día\n\n// --- 3. Helper para devolver ISO sin zona horaria --------------\nconst toISO = (d, hour) => {\n  // Creamos un Date en UTC para la hora pedida\n  const utc = new Date(Date.UTC(\n    d.getFullYear(),\n    d.getMonth(),\n    d.getDate(),\n    hour, 0, 0\n  ));\n  return utc.toISOString().slice(0, 19);            // YYYY-MM-DDTHH:MM:SS\n};\n\n// --- 4. Guardar resultados --------------------------------------\nitem.json.startDate = toISO(base, 8);   // 08:00:00\nitem.json.endDate   = toISO(base, 18);  // 18:00:00\n\nreturn [item];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        832
+      ],
+      "id": "7cedc987-aaca-4f5e-807f-b2ad746996b3",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2a1c681a-dcb7-4cab-807a-253bcb8a2a6e",
+              "leftValue": "={{ $json.summary }}",
+              "rightValue": "🟢",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        832
+      ],
+      "id": "6a2f7170-3540-4e19-a4c5-0bf87a700ac5",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "phoneNumberId": "686913561180947",
+        "recipientPhoneNumber": "={{ $json.output.Telefono }}",
+        "template": "recordatorio1|es_AR",
+        "components": {
+          "component": [
+            {
+              "bodyParameters": {
+                "parameter": [
+                  {
+                    "text": "={{ $json.output.Nombre }}"
+                  },
+                  {
+                    "text": "={{ $json.output.Hora }}"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        0
+      ],
+      "id": "89359495-fde0-45a1-bfc1-e7924b86669a",
+      "name": "Send template",
+      "webhookId": "32a44aa1-30b1-48c2-b9d3-52b10329f42f",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "kqoxXEUHpYVXrcad",
+          "name": "Cuenta Principal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "limit": 15,
+        "timeMin": "={{ $json.startDate }}",
+        "timeMax": "={{ $json.endDate }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        0
+      ],
+      "id": "24aed99b-b787-49e2-ae88-9a0b3a9a92e6",
+      "name": "Get many events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "limit": 15,
+        "timeMin": "={{ $json.startDate }}",
+        "timeMax": "={{ $json.endDate }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        448
+      ],
+      "id": "106dc2d7-4f23-4e11-a951-d661c9e8db7d",
+      "name": "Get many events1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "limit": 15,
+        "timeMin": "={{ $json.startDate }}",
+        "timeMax": "={{ $json.endDate }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        832
+      ],
+      "id": "1be248c3-be3e-425a-9d70-aa43c55e7c6c",
+      "name": "Get many events2",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "eventId": "={{ $json.id }}",
+        "updateFields": {
+          "summary": "=🟠{{ $json.summary }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1200,
+        816
+      ],
+      "id": "3f697864-29b9-4593-8243-459a142c804c",
+      "name": "Update an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "phoneNumberId": "686913561180947",
+        "recipientPhoneNumber": "={{ $json.output.Telefono }}",
+        "template": "recordatorio1|es_AR",
+        "components": {
+          "component": [
+            {
+              "bodyParameters": {
+                "parameter": [
+                  {
+                    "text": "={{ $json.output.Nombre }}"
+                  },
+                  {
+                    "text": "={{ $json.output.Hora }}"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        432
+      ],
+      "id": "5863c215-f9d8-4e3a-b0e3-26f81bfd325a",
+      "name": "Send template1",
+      "webhookId": "32a44aa1-30b1-48c2-b9d3-52b10329f42f",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "kqoxXEUHpYVXrcad",
+          "name": "Cuenta Principal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "=summary: {{ $json.summary }}\nfecha cita:{{ $json.start.dateTime }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Nombre",
+              "description": "Sólo el/los nombre/s, NUNCA incluir los apellidos",
+              "required": true
+            },
+            {
+              "name": "Telefono",
+              "description": "Telefono",
+              "required": true
+            },
+            {
+              "name": "Hora",
+              "description": "Solo la hora hh:mm",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        432
+      ],
+      "id": "f9206cef-836f-4a23-b337-d57d4399d1f5",
+      "name": "Information Extractor1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 19
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "294db735-8378-4b5d-a671-0fdf14f93bb2",
+      "name": "19:00"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        448
+      ],
+      "id": "07c3ebd4-17ef-4b08-b13a-ccead2f6aefe",
+      "name": "21:00"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        832
+      ],
+      "id": "c4954937-89c6-4cb4-9057-1300cc9c9114",
+      "name": "23:00"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time2": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Get many events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Send template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Get many events1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Get many events2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Update an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor1": {
+      "main": [
+        [
+          {
+            "node": "Send template1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "19:00": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "21:00": {
+      "main": [
+        [
+          {
+            "node": "Date & Time1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "23:00": {
+      "main": [
+        [
+          {
+            "node": "Date & Time2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cf355b9a-dd28-49f8-9595-d210b1a875fb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "crSXiIhLRtfAjQ2n",
+  "tags": []
+}

@@ -1,0 +1,27 @@
+{
+  "domain": "crm",
+  "title": "CRM & Lead Management Workflows",
+  "description": "Blueprints de clasificación de leads, scoring y gestión de contactos. Incluye agente inmobiliaria como caso vertical y clasificador genérico de leads por intención y urgencia.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "ghl-engine",
+    "crm-engine",
+    "workflow-orchestrator"
+  ],
+  "providersObserved": [
+    "google-sheets",
+    "n8n-data-tables",
+    "openai",
+    "chatwoot"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Google Sheets y n8n Data Tables son adapters actuales. El engine final apunta a GHL como CRM principal para Sarah. Los campos de clasificación (urgencia, tipo_consulta, presupuesto) son el contrato de datos a preservar."
+}

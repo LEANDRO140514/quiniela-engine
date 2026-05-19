@@ -1,0 +1,900 @@
+{
+  "name": "Data Tables",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        240
+      ],
+      "id": "48b340da-5a3b-4cd5-a63c-dd1bda0712e3",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "webgSMWyKSiwMMbD",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=Te voy a pasar un email y tienes que clasificarlo:\n\nAsunto: {{ $json.subject }}\n\nContenido: {{ $json.text }}\n\n",
+        "categories": {
+          "categories": [
+            {
+              "category": "SI",
+              "description": "El correo hace mención a una pregunta sobre servicios ofrecidos, producto, o precio de implementación de Automatizaciones o Agentes de Inteligencia Artificial. También si hace mención a BlunexAI. Cualquier consulta sobre implementaciones y soluciones IA en general."
+            },
+            {
+              "category": "No",
+              "description": "El correo es SPAM o pertenece a correos de suscripciones, publicidad, notificaciones, etc."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        240
+      ],
+      "id": "d456b8bc-4e7c-4c72-b2e0-0466212bf002",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "presencePenalty": 0,
+          "temperature": 0.1,
+          "topP": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        384
+      ],
+      "id": "273ba11d-6bc7-43b2-8c59-62ce85cb92dc",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rTSt6FnagO3Pruoq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "responseFormat": "json_object",
+          "presencePenalty": 0,
+          "temperature": 0.1,
+          "topP": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        384
+      ],
+      "id": "18640c88-3cc7-48a7-9cdb-490ab70d2d9b",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "rTSt6FnagO3Pruoq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Dirección de correo electrónico que envía el email: {{ $json.from.value[0].address }}\n\nNombre del usuario que envía el email: {{ $json.from.value[0].name }}\n\nAsunto: {{ $json.subject }}\n\nContenido: {{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Perteneces a la empresa IAbyIA, empresa dedicada a la implementacion de automatizaciones y soluciones con inteligencia artificial.\n\nTe encargas de analizar emails de consulta de información acerca de implementaciones y soluciones IA. También las consultas pueden pedir información acerca de servicios que ofrecemos.\n\nTu objetivo principal es extraer la siguiente información del correo de entrada:\n\n* nombre: nombre y apellidos del lead.\n\n* email: dirección de correo electrónico del lead.\n\n* telefono: número de teléfono del lead.\n\n* resumen: Genera un resumen claro, conciso y profesional en español que incluya: Motivo principal o petición, Información clave como nombres, fechas, números u otros datos relevantes, Acciones o tareas sugeridas (qué debe hacerse y quién podría hacerlo), Tono general del remitente. Máximo 120 palabras debe estar listo para que sea fácil y rápidamente interpretable para una lectura rápida, pero sin perder información.\n\n* tipo_consulta: clasifica en una de las siguientes {informacion, presupuesto, colaboracion, otros}.\n\n* urgencia: clasifica en uan de las siguientes {alta, media, baja}.\n\n* presupuesto: si hace mención de coste, incluye el valor numerico, por ejemplo: 2500. Si no dice nada, incluye 0\n\nSolo devuelve JSON con el siguiente formato:\n{\n  \"nombre\": \"\",\n  \"email\": \"\",\n  \"telefono\": \"\",\n  \"resumen\": \"\",\n  \"tipo_consulta\": \"\",\n  \"urgencia\": \"\",\n  \"presupuesto\": \"\"\n}\n\nNo devuelvas nada más de información que el formato anterior.\n\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        288,
+        224
+      ],
+      "id": "94d9c6a5-010f-497c-80db-72d0f7cf5947",
+      "name": "Extraer Informacion"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "90Fstxt0rm7BJuiX",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "/projects/4atUmIzCoj19RnOe/datatables/90Fstxt0rm7BJuiX"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{ $json.nombre }}",
+            "presupuesto": "={{ $json.presupuesto }}",
+            "email": "={{ $json.email }}",
+            "telefono": "={{ $json.telefono }}",
+            "resumen": "={{ $json.resumen }}",
+            "tipo_consulta": "={{ $json.tipo_consulta }}",
+            "urgencia": "={{ $json.urgencia }}",
+            "estado": "Pendiente"
+          },
+          "matchingColumns": [
+            "nombre"
+          ],
+          "schema": [
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "resumen",
+              "displayName": "resumen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "tipo_consulta",
+              "displayName": "tipo_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "urgencia",
+              "displayName": "urgencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "presupuesto",
+              "displayName": "presupuesto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        640,
+        224
+      ],
+      "id": "6442b84e-04b1-4656-a055-0be14b5ac9b3",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -208
+      ],
+      "id": "806118e7-e584-49ac-a9de-1ce79e87e958",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1T51hUMctsIxLKJfrUOwKMNnBDQvyskCpALLiV7PrZPM",
+          "mode": "list",
+          "cachedResultName": "Leads Prueba Tablas N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T51hUMctsIxLKJfrUOwKMNnBDQvyskCpALLiV7PrZPM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1065886226,
+          "mode": "list",
+          "cachedResultName": "leads_ia_20_schema_requerido",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T51hUMctsIxLKJfrUOwKMNnBDQvyskCpALLiV7PrZPM/edit#gid=1065886226"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        80,
+        -208
+      ],
+      "id": "612a4c56-60ad-44eb-94f4-3d307d0b97e8",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Identidad\nEres un asistente de la empresa IAbyIA dedicada a la implementación de automatizaciones y agentes de inteligencia artificial. Manejas la información de Leads de nuestra empresa.\n\n# Objetivo\nTu objetivo consiste en utilizar tus herramientas para resolver consultas sobre los Leads de nuestra empresa.\nEsta es la información que puedes tener de un Lead:\nnombre, email, telefono, asunto, resumen, tipo_consulta, contenido_correo, urgencia, presupuesto, estado\n\n# Herramientas:\n\n* \"Obtener Todo\": usa esta herramienta cuando te pidan una consulta general y no te especifiquen ningún filtro.\n\n* \"Urgencia\": utiliza esta herramienta cuando te pidan la urgencia de la implementación que solicita el lead. Siempre debes buscar por los siguientes valores: {alta, media, baja}.\n\n* \"Tipo Consulta\": utiliza esta herramienta cuando quieran filtrar por el tipo de consulta de los leads. Pueden ser los siguientes valores: {informacion, presupuesto, colaboracion, otros}.\n\n* \"Presupuesto Mayor a\": utiliza esta herramienta cuando quieran filtrar por un presupuesto superior o igual a la cantidad especificada.\n\n* \"Presupuesto Menor a\": utiliza esta herramienta cuando quieran filtrar por un presupuesto inferior o igual a la cantidad especificada.\n\n* \"Estado\": utiliza esta herramienta cuando quieran filtrar por el estado del lead. Este estado puede ser {informacion, presupuesto, colaboracion, otros}\n\n* \"Think\": utiliza esta herramienta para enumerar los pasos que vas a seguir antes de actuar y así seleccionar la mejor herramienta para cada caso.\n\n* \"Calculator\": utiliza esta herramienta para realizar operaciones matemáticas.\n\n# Recordatorios:\n\n* Fecha y Hora actual: {{ $now }}\n\n* No ofrezcas al usuario acciones que no puedas realizar, como exportar al csv u otra cosa.\n\n",
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        -96
+      ],
+      "id": "4617a058-86db-40f3-b036-560218fd4135",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1088,
+        -96
+      ],
+      "id": "2f4a5c7b-9aae-4a08-b68a-827d3bb36732",
+      "name": "When chat message received",
+      "webhookId": "66ab516a-a14f-4b02-a5bd-10ec72d96012"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1216,
+        128
+      ],
+      "id": "49472323-9b76-4259-87e2-c123e0df67c6",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "NwBB6KJoDAhG5jar",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "reasoningEffort": "low"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        128
+      ],
+      "id": "619c74a0-6dca-4be0-9918-861187928a5a",
+      "name": "OpenAI GPT-5",
+      "credentials": {
+        "openAiApi": {
+          "id": "rTSt6FnagO3Pruoq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        1856,
+        -16
+      ],
+      "id": "effd4d4e-5a0a-4536-b3ab-177cd37d77df",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        -16
+      ],
+      "id": "6ac7c211-ecfe-4a23-a9b3-c6c580e51ef0",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "90Fstxt0rm7BJuiX",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "/projects/4atUmIzCoj19RnOe/datatables/90Fstxt0rm7BJuiX"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "urgencia",
+              "condition": "ilike",
+              "keyValue": "={{ $fromAI('urgencia', ``, 'string') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        208
+      ],
+      "id": "9a8b6510-5ef2-4026-ae68-0f71991afbf6",
+      "name": "Urgencia"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "90Fstxt0rm7BJuiX",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "/projects/4atUmIzCoj19RnOe/datatables/90Fstxt0rm7BJuiX"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "tipo_consulta",
+              "condition": "ilike",
+              "keyValue": "={{ $fromAI('tipo_consulta', ``, 'string') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        208
+      ],
+      "id": "69979b92-7ec8-4a4f-b8cb-2fd14ec0340f",
+      "name": "Tipo Consulta"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "90Fstxt0rm7BJuiX",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "/projects/4atUmIzCoj19RnOe/datatables/90Fstxt0rm7BJuiX"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "presupuesto",
+              "condition": "gte",
+              "keyValue": "={{ $fromAI('presupuesto', ``, 'string') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        208
+      ],
+      "id": "18396ef8-f727-4ad3-9f87-3cbec3012479",
+      "name": "Presupuesto Mayor a"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "90Fstxt0rm7BJuiX",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "/projects/4atUmIzCoj19RnOe/datatables/90Fstxt0rm7BJuiX"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "presupuesto",
+              "condition": "lte",
+              "keyValue": "={{ $fromAI('presupuesto', ``, 'string') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        208
+      ],
+      "id": "ca75ab4b-6305-4171-b280-16249588bfe6",
+      "name": "Presupuesto Menor a"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "90Fstxt0rm7BJuiX",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "/projects/4atUmIzCoj19RnOe/datatables/90Fstxt0rm7BJuiX"
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        208
+      ],
+      "id": "93cfd658-c3c8-430a-b07d-3a8674976e4a",
+      "name": "Obtener Todo"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "90Fstxt0rm7BJuiX",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "/projects/4atUmIzCoj19RnOe/datatables/90Fstxt0rm7BJuiX"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "estado",
+              "condition": "ilike",
+              "keyValue": "={{ $fromAI('estado', ``, 'string') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        208
+      ],
+      "id": "4b69a1f7-4f66-49c1-8048-cb719fe034b1",
+      "name": "Estado"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "90Fstxt0rm7BJuiX",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "/projects/4atUmIzCoj19RnOe/datatables/90Fstxt0rm7BJuiX"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{ $json.nombre }}",
+            "email": "={{ $json.email }}",
+            "telefono": "={{ $json.telefono }}",
+            "resumen": "={{ $json.resumen }}",
+            "tipo_consulta": "={{ $json.tipo_consulta }}",
+            "urgencia": "={{ $json.urgencia }}",
+            "presupuesto": "={{ $json.presupuesto }}",
+            "estado": "={{ $json.estado }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "resumen",
+              "displayName": "resumen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "tipo_consulta",
+              "displayName": "tipo_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "urgencia",
+              "displayName": "urgencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "presupuesto",
+              "displayName": "presupuesto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -208
+      ],
+      "id": "a8b6b21f-370d-41f0-8b36-f377041f3fb3",
+      "name": "DATA TABLES"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Extraer Informacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extraer Informacion",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Informacion": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "DATA TABLES",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Urgencia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo Consulta": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Presupuesto Mayor a": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Presupuesto Menor a": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Todo": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estado": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DATA TABLES": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "544702ad-a150-4cd9-94b4-50c7ee3d30f3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "cwfxKEC5MQGN3AYD",
+  "tags": []
+}

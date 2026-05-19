@@ -1,0 +1,25 @@
+{
+  "domain": "agents",
+  "title": "Agent Orchestration Workflows",
+  "description": "Blueprints de agentes conversacionales multicanal con routing por tipo de mensaje (texto, audio, imagen). Patrón base para orquestar LLMs con memoria persistente y múltiples canales de entrada.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "agent-orchestrator",
+    "workflow-orchestrator"
+  ],
+  "providersObserved": [
+    "telegram",
+    "openai",
+    "n8n-memory"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "El switch de tipo de mensaje (texto/audio/imagen) es el patrón clave a extraer. Cada rama pre-procesa el input antes de pasarlo al agente LLM central."
+}

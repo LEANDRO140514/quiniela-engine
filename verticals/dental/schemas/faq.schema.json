@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "verticals/dental/schemas/faq.schema.json",
+  "title": "FAQ",
+  "description": "Pregunta frecuente del dominio dental",
+  "type": "object",
+  "required": ["id", "category", "question", "answer"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^faq-\\d{3}$" },
+    "category": { "type": "string", "const": "faq" },
+    "question": { "type": "string", "minLength": 5 },
+    "answer": { "type": "string", "minLength": 10 },
+    "tags": { "type": "array", "items": { "type": "string" } }
+  }
+}

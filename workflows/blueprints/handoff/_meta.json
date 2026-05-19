@@ -1,0 +1,24 @@
+{
+  "domain": "handoff",
+  "title": "Human Handoff Workflows",
+  "description": "Blueprints para transferencia de conversación desde el agente a un asesor humano, empaquetando el historial y contexto completo antes de la transferencia.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "handoff-engine",
+    "workflow-orchestrator"
+  ],
+  "providersObserved": [
+    "chatwoot",
+    "openai"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Chatwoot es el adapter actual de mensajería/inbox. El engine debe ser agnóstico: el mismo patrón aplica a GHL Conversations, Intercom o Zendesk. La lógica de empaquetado de contexto es el núcleo reutilizable."
+}

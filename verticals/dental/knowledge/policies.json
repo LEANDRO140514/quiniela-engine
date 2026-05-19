@@ -1,0 +1,23 @@
+[
+  {
+    "id": "pol-001",
+    "category": "policy",
+    "title": "Política de Cancelación",
+    "content": "Se requiere aviso de cancelación con al menos 24 horas de anticipación. Cancelaciones tardías o no presentaciones tienen un cargo de $300 MXN. La primera falta sin aviso es sin cargo como cortesía.",
+    "tags": ["cancelación", "política", "cargos"]
+  },
+  {
+    "id": "pol-002",
+    "category": "policy",
+    "title": "Garantía de Tratamientos",
+    "content": "Las resinas tienen garantía de 1 año por fractura o desalojo. Las coronas y puentes tienen garantía de 3 años. Las limpiezas no aplican para garantía por ser tratamiento preventivo recurrente.",
+    "tags": ["garantía", "tratamientos", "cobertura"]
+  },
+  {
+    "id": "pol-003",
+    "category": "policy",
+    "title": "Primera Visita",
+    "content": "La primera consulta incluye valoración completa, radiografías panorámicas, plan de tratamiento personalizado y presupuesto detallado sin costo. Duración aproximada: 60 minutos.",
+    "tags": ["primera visita", "consulta", "valoración"]
+  }
+]

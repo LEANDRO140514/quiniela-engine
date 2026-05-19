@@ -1,0 +1,62 @@
+{
+  "id": "onboarding-001",
+  "category": "onboarding",
+  "clinicInfo": {
+    "name": "Clínica Dental Curdeeclau",
+    "slogan": "Tu sonrisa es nuestra prioridad",
+    "address": "Av. Principal 123, Col. Centro, Ciudad de México",
+    "phone": "55-1234-5678",
+    "whatsapp": "+5215512345678",
+    "email": "citas@curdeeclau-dental.mx",
+    "website": "https://curdeeclau-dental.mx",
+    "socialMedia": {
+      "facebook": "CurdeeclauDental",
+      "instagram": "@curdeeclau.dental"
+    }
+  },
+  "team": [
+    {
+      "name": "Dra. María González",
+      "role": "Odontóloga General y Directora Clínica",
+      "specialty": "general-dentistry",
+      "cedula": "12345678",
+      "education": "Universidad Nacional Autónoma de México",
+      "yearsOfExperience": 15,
+      "bio": "Especialista en rehabilitación oral integral con enfoque en odontología mínimamente invasiva."
+    },
+    {
+      "name": "Dr. Carlos Ruiz",
+      "role": "Ortodoncista",
+      "specialty": "orthodontics",
+      "cedula": "23456789",
+      "education": "Universidad Autónoma Metropolitana",
+      "yearsOfExperience": 12,
+      "bio": "Ortodoncista certificado con experiencia en brackets tradicionales y alineadores invisibles."
+    },
+    {
+      "name": "Dra. Ana López",
+      "role": "Odontopediatra",
+      "specialty": "pediatric-dentistry",
+      "cedula": "34567890",
+      "education": "Universidad de Guadalajara",
+      "yearsOfExperience": 8,
+      "bio": "Especializada en manejo de conducta infantil y odontología preventiva para niños."
+    }
+  ],
+  "facilities": [
+    "3 consultorios equipados con tecnología digital",
+    "Radiografía panorámica y periapical digital",
+    "Escáner intraoral 3D",
+    "Esterilización con autoclave grado hospitalario",
+    "Sala de espera con WiFi gratuito",
+    "Estacionamiento gratuito para pacientes",
+    "Acceso para silla de ruedas"
+  ],
+  "values": [
+    "Atención personalizada y sin prisas",
+    "Tecnología de punta para diagnósticos precisos",
+    "Trato cálido y empático",
+    "Transparencia total en presupuestos",
+    "Educación al paciente como pilar del tratamiento"
+  ]
+}

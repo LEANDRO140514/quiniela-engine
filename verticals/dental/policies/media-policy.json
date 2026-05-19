@@ -1,0 +1,56 @@
+{
+  "vertical": "dental",
+  "description": "Políticas de envío de medios para Sarah Dental Receptionist",
+  "maxFileSizeBytes": 15728640,
+  "allowedTypes": ["image", "pdf", "audio"],
+  "presignedUrlExpirySeconds": 3600,
+  "channels": {
+    "whatsapp": {
+      "enabled": false,
+      "supportedTypes": ["image", "pdf", "audio"],
+      "maxSizeBytes": 15728640,
+      "phase": 4
+    },
+    "web": {
+      "enabled": true,
+      "supportedTypes": ["image", "pdf"],
+      "maxSizeBytes": 10485760,
+      "phase": 3
+    },
+    "email": {
+      "enabled": false,
+      "supportedTypes": ["image", "pdf"],
+      "maxSizeBytes": 26214400,
+      "phase": 4
+    }
+  },
+  "mediaTemplates": {
+    "presupuesto": {
+      "type": "pdf",
+      "description": "Presupuesto detallado de tratamiento",
+      "generatedBy": "system"
+    },
+    "indicaciones_postoperatorias": {
+      "type": "pdf",
+      "description": "Cuidados post-tratamiento",
+      "generatedBy": "template"
+    },
+    "consentimiento_informado": {
+      "type": "pdf",
+      "description": "Formato de consentimiento informado",
+      "generatedBy": "template"
+    },
+    "radiografia": {
+      "type": "image",
+      "description": "Radiografía panorámica o periapical",
+      "generatedBy": "clinic"
+    },
+    "nota_voz": {
+      "type": "audio",
+      "description": "Nota de voz del doctor para el paciente",
+      "generatedBy": "doctor"
+    }
+  },
+  "retentionDays": 90,
+  "defaultExpirySeconds": 86400
+}

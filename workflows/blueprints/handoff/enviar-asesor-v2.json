@@ -1,0 +1,146 @@
+{
+  "name": "EnviarAsesor",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"conversation id\": \"5\",\n  \"contact id\": \"17\"\n}"
+      },
+      "id": "02493e0c-61a9-4483-92e6-838b88bd25c4",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -384,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=/api/v1/accounts/1/conversations/{{ $('When Executed by Another Workflow').item.json['conversation id'] }}/labels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"labels\": [\"asistencia_ia\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -128,
+        272
+      ],
+      "id": "dffe76ad-4676-408b-b254-8dbadef6cdfe",
+      "name": "etiqueta_asistencia_ia",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yoKk6kHeJPffzlEK",
+          "name": "Chatwoot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=/api/v1/accounts/1/contacts/{{ $('When Executed by Another Workflow').item.json['contact id'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"custom_attributes\": {\n    \"estado\": \"OFF\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        128,
+        272
+      ],
+      "id": "0b6f0771-ece9-473d-be29-f7ca5b9feacb",
+      "name": "apagar bot1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yoKk6kHeJPffzlEK",
+          "name": "Chatwoot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3db5a7b3-8437-4425-87af-0e4826d3fae5",
+              "name": "mensaje enviado",
+              "value": "Perfecto, te voy a transferir con el equipo correspondiente para que puedan ayudarte directamente. Muchas gracias por tu paciencia, en breve te atenderán.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        272
+      ],
+      "id": "6c7df451-7868-40b0-b561-171e7d198a1c",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "etiqueta_asistencia_ia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "etiqueta_asistencia_ia": {
+      "main": [
+        [
+          {
+            "node": "apagar bot1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "apagar bot1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "198d7611-96a5-4dcf-92df-92a8aa879366",
+  "meta": {
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "fspb8odCCrd0gJlL",
+  "tags": []
+}

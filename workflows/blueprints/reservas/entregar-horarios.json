@@ -1,0 +1,158 @@
+{
+  "name": "Entregar Horarios Cabañas",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FechaInicio\": \"2025-07-09T14:00:00\",\n  \"FechaFin\": \"2025-07-14T10:00:00\"\n}"
+      },
+      "id": "98fa8f36-3038-4661-8075-287aa712785c",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -688,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normaliza Fechainicio/FechaFin (YYYY-MM-DD) a BA (check-in 14:00 / check-out 10:00)\n// Calcula noches/días por diferencia de YMD (no por horas) + horizonte simétrico\n\nfunction mkBA(ymd, h, m=0, s=0) {\n  return `${ymd}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}-03:00`;\n}\nfunction addDaysYMD(ymd, n) {\n  const t = new Date(`${ymd}T00:00:00Z`).getTime() + n*86400000;\n  const d = new Date(t);\n  return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;\n}\nfunction daysDiffYMD(a, b) { // b - a en días de calendario\n  const ta = new Date(`${a}T00:00:00Z`).getTime();\n  const tb = new Date(`${b}T00:00:00Z`).getTime();\n  return Math.max(0, Math.round((tb - ta)/86400000));\n}\n\nconst inItem = $input.first().json;\nconst ymdStart = String(inItem.Fechainicio ?? inItem.FechaInicio ?? inItem.fechainicio ?? inItem.fechaInicio).match(/\\d{4}-\\d{2}-\\d{2}/)?.[0];\nconst ymdEnd   = String(inItem.FechaFin ?? inItem.Fechafin ?? inItem.fechaFin ?? inItem.fechafin).match(/\\d{4}-\\d{2}-\\d{2}/)?.[0];\n\nif (!ymdStart || !ymdEnd) {\n  return [{ json: { ok:false, error:\"Fechas faltantes o inválidas (YYYY-MM-DD).\" } }];\n}\n\n// Horas fijas BA\nconst fechaInicioBA = mkBA(ymdStart, 14, 0, 0);\nconst fechaFinBA    = mkBA(ymdEnd,   10, 0, 0);\n\n// ✅ Noches = (días de calendario entre start y end) - 1\nconst dias   = daysDiffYMD(ymdStart, ymdEnd); // p.ej. 05→10 = 5\nconst noches = Math.max(1, dias - 1);         // 5 - 1 = 4\n\n// Horizonte simétrico (configurable)\nconst horizonteDias = Number(inItem.horizonteDias ?? 60);\nconst horizonteIniYMD = addDaysYMD(ymdStart, -horizonteDias);\nconst horizonteFinYMD = addDaysYMD(ymdStart,  +horizonteDias);\nconst horizonteIniBA  = mkBA(horizonteIniYMD, 0, 0, 0);\nconst horizonteFinBA  = mkBA(horizonteFinYMD, 23, 59, 59);\n\nreturn [{\n  json: {\n    ok:true,\n    ymdStart, ymdEnd,\n    fechaInicioBA, fechaFinBA,\n    noches, dias,\n    horizonteDias,\n    horizonteIniYMD, horizonteFinYMD,\n    horizonteIniBA,  // usar en After\n    horizonteFinBA   // usar en Before\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -448,
+        128
+      ],
+      "id": "de90ba54-9c04-450c-a90d-ea2ffbdc2b9d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $json.horizonteIniBA }}",
+        "timeMax": "={{ $json.horizonteFinBA }}",
+        "options": {
+          "orderBy": "startTime",
+          "recurringEventHandling": "expand"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        128
+      ],
+      "id": "75956161-f99e-4d8e-b51d-39b8d49fac6a",
+      "name": "Get many events2",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function ymd(d){ const x=new Date(d); return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`; }\nfunction addDays(s, n){ return ymd(new Date(new Date(s+'T00:00:00Z').getTime() + n*86400000)); }\nfunction mkBA(s,h,m=0,sec=0){ return `${s}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}-03:00`; }\nfunction daysBetween(a,b){ return Math.max(0, Math.round((new Date(b+'T00:00:00Z') - new Date(a+'T00:00:00Z'))/86400000)); }\n\n// Normalización del Code 1\nconst [normItem] = $items('Code in JavaScript', 0, 0); // <-- cambia nombre si hace falta\nconst norm = normItem?.json;\nif (!norm) return [{ json: { ok:false, error:\"No encuentro salida del Code 1.\" } }];\n\nconst noches = Number(norm.noches);\nconst startRequestedYMD = norm.ymdStart;\nconst limInf = norm.horizonteIniYMD, limSup = norm.horizonteFinYMD;\nconst maxSteps = Math.max(1, daysBetween(limInf, limSup));\n\n// Eventos del calendario (horizonte completo)\nconst evItems = $('Get many events2').all(); // <-- cambia nombre si hace falta\n\n// Días ocupados (timed y all-day; end.date exclusivo)\nconst busy = new Set();\nfor (const it of evItems) {\n  const e = it.json;\n  const sISO = e.start?.dateTime || (e.start?.date ? `${e.start.date}T00:00:00-03:00` : null);\n  const eISO = e.end?.dateTime   || (e.end?.date   ? `${e.end.date}T00:00:00-03:00`   : null);\n  if (!sISO || !eISO) continue;\n  let d = ymd(sISO), endExcl = ymd(eISO);\n  while (d < endExcl) { busy.add(d); d = addDays(d, 1); }\n}\n\nfunction isFreeBlock(d0, n){\n  let d = d0;\n  for (let i=0;i<n;i++){ if (busy.has(d)) return false; d = addDays(d,1); }\n  return true;\n}\n\n// Si el rango pedido está libre → devolver ese\nif (isFreeBlock(startRequestedYMD, noches)) {\n  let endYMD = startRequestedYMD; for (let i=0;i<noches;i++) endYMD = addDays(endYMD,1);\n  const opcion = {\n    startYMD: startRequestedYMD,\n    endYMD,\n    startBA: mkBA(startRequestedYMD,14,0,0),\n    endBA:   mkBA(endYMD,10,0,0),\n    noches,\n    dias: noches+1\n  };\n  return [{ json: { disponible:true, opcion, mensaje:`Disponible: ${opcion.startYMD}–${opcion.endYMD}` } }];\n}\n\n// Buscar la MÁS CERCANA (empate → preferimos FUTURO)\nlet mejor = null;\nfor (let step = 1; step <= maxSteps; step++) {\n  const fwdStart = addDays(startRequestedYMD, step);\n  if (fwdStart <= limSup && isFreeBlock(fwdStart, noches)) {\n    let endYMD = fwdStart; for (let i=0;i<noches;i++) endYMD = addDays(endYMD,1);\n    mejor = { startYMD: fwdStart, endYMD, delta: step, dir: 'fwd' };\n    break;\n  }\n  const backStart = addDays(startRequestedYMD, -step);\n  if (backStart >= limInf && isFreeBlock(backStart, noches)) {\n    let endYMD = backStart; for (let i=0;i<noches;i++) endYMD = addDays(endYMD,1);\n    mejor = { startYMD: backStart, endYMD, delta: step, dir: 'back' };\n    break;\n  }\n}\n\nlet opcion = null;\nif (mejor) {\n  opcion = {\n    startYMD: mejor.startYMD,\n    endYMD:   mejor.endYMD,\n    startBA:  mkBA(mejor.startYMD,14,0,0),\n    endBA:    mkBA(mejor.endYMD,10,0,0),\n    noches,\n    dias: noches+1\n  };\n}\n\nreturn [{\n  json: {\n    disponible:false,\n    opcion,\n    mensaje: opcion\n      ? `La opción más cercana disponible es del ${opcion.startYMD} hasta ${opcion.endYMD}`\n      : 'No hay opciones dentro del horizonte.'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        128
+      ],
+      "id": "04df7428-f507-4fde-8621-efc95b6f4789",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01392a04-399c-431a-b92a-19240c3b89c4",
+              "name": "mensaje",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        128
+      ],
+      "id": "57f6d89b-b259-4557-bfa1-5d064843dc04",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Get many events2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e79683a8-8385-4678-a4b0-d80b8e667021",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "KamVtCxjBnnEqEvO",
+  "tags": []
+}

@@ -1,0 +1,63 @@
+{
+  "vertical": "dental",
+  "tools": [
+    {
+      "id": "tool-check-availability",
+      "name": "checkAvailability",
+      "description": "Revisa disponibilidad de citas por fecha, doctor o tipo de procedimiento",
+      "parameters": {
+        "date": { "type": "string", "format": "date", "required": false },
+        "doctorId": { "type": "string", "required": false },
+        "procedureId": { "type": "string", "required": false }
+      },
+      "status": "planned",
+      "phase": 3
+    },
+    {
+      "id": "tool-schedule-appointment",
+      "name": "scheduleAppointment",
+      "description": "Agenda una cita para un paciente nuevo o existente",
+      "parameters": {
+        "patientId": { "type": "string", "required": true },
+        "dateTime": { "type": "string", "format": "date-time", "required": true },
+        "procedureId": { "type": "string", "required": true },
+        "doctorId": { "type": "string", "required": false }
+      },
+      "status": "planned",
+      "phase": 3
+    },
+    {
+      "id": "tool-cancel-appointment",
+      "name": "cancelAppointment",
+      "description": "Cancela una cita existente y aplica política de cancelación",
+      "parameters": {
+        "appointmentId": { "type": "string", "required": true },
+        "reason": { "type": "string", "required": false }
+      },
+      "status": "planned",
+      "phase": 3
+    },
+    {
+      "id": "tool-search-knowledge",
+      "name": "searchKnowledge",
+      "description": "Busca en la base de conocimiento dental (FAQ, procedimientos, políticas)",
+      "parameters": {
+        "query": { "type": "string", "required": true },
+        "categories": { "type": "array", "items": { "type": "string" }, "required": false }
+      },
+      "status": "planned",
+      "phase": 3
+    },
+    {
+      "id": "tool-escalate-to-human",
+      "name": "escalateToHuman",
+      "description": "Transfiere la conversación a un recepcionista humano",
+      "parameters": {
+        "reason": { "type": "string", "required": true },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"], "required": true }
+      },
+      "status": "planned",
+      "phase": 3
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "term-001",
+    "term": "Profilaxis",
+    "definition": "Limpieza dental profesional que elimina placa bacteriana y sarro para prevenir enfermedades periodontales.",
+    "category": "terminology"
+  },
+  {
+    "id": "term-002",
+    "term": "Caries",
+    "definition": "Lesión en el esmalte dental causada por ácidos producidos por bacterias que degradan los azúcares en la boca.",
+    "category": "terminology"
+  },
+  {
+    "id": "term-003",
+    "term": "Periodoncia",
+    "definition": "Especialidad odontológica que trata las enfermedades de las encías y el hueso que sostiene los dientes.",
+    "category": "terminology"
+  }
+]

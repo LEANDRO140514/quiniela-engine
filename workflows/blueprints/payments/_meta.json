@@ -1,0 +1,22 @@
+{
+  "domain": "payments",
+  "title": "Payment Workflows",
+  "description": "Blueprints de integración de pagos con Mercado Pago. Dos flujos desacoplados: generación de link de pago (checkout preference) y recepción de webhook de confirmación.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "payment-engine"
+  ],
+  "providersObserved": [
+    "mercado-pago"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Mercado Pago es el adapter actual (LATAM). El engine debe ser agnóstico al proveedor de pagos: el mismo patrón aplica a Stripe, PayPal o crypto. El filtro de webhook por type=payment es lógica determinística crítica."
+}

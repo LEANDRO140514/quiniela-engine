@@ -1,0 +1,52 @@
+{
+  "rules": [
+    {
+      "id": "esc-001",
+      "level": "critical",
+      "trigger": "inflamación que compromete vía aérea, sangrado incontrolable, pérdida de conciencia",
+      "action": "Derivar a urgencias hospitalarias INMEDIATAMENTE. No intentar agendar cita. Proporcionar número de emergencias 911.",
+      "autoEscalate": true,
+      "notifyHuman": true
+    },
+    {
+      "id": "esc-002",
+      "level": "high",
+      "trigger": "dolor intenso (8-10/10), absceso visible, fiebre > 38.5°C, trauma dental con fractura",
+      "action": "Agendar cita de urgencia mismo día. Si no hay disponibilidad, ofrecer horario prioritario siguiente día hábil y dar recomendaciones de manejo de dolor.",
+      "autoEscalate": false,
+      "notifyHuman": true
+    },
+    {
+      "id": "esc-003",
+      "level": "medium",
+      "trigger": "dolor moderado (5-7/10), alveolitis, sensibilidad persistente, corona o resina desalojada",
+      "action": "Agendar cita dentro de las siguientes 24-48 horas. Dar recomendaciones de cuidado temporal.",
+      "autoEscalate": false,
+      "notifyHuman": false
+    },
+    {
+      "id": "esc-004",
+      "level": "low",
+      "trigger": "consulta de rutina, limpieza, duda general, presupuesto",
+      "action": "Agendar cita en horario regular según disponibilidad. Responder preguntas con base de conocimiento.",
+      "autoEscalate": false,
+      "notifyHuman": false
+    },
+    {
+      "id": "esc-005",
+      "level": "legal",
+      "trigger": "mención de demanda, abogado, mala praxis, queja formal, solicitud de expediente por medios legales",
+      "action": "No responder sobre el tema. Transferir inmediatamente a la directora clínica. Responder: 'Permítame transferirle con la dirección de la clínica para atender su caso personalmente.'",
+      "autoEscalate": true,
+      "notifyHuman": true
+    },
+    {
+      "id": "esc-006",
+      "level": "human-request",
+      "trigger": "paciente pide explícitamente hablar con un humano, frustración evidente, pregunta fuera del alcance del asistente",
+      "action": "Transferir a recepcionista humana. Si está fuera de horario, programar llamada de vuelta para el siguiente día hábil.",
+      "autoEscalate": false,
+      "notifyHuman": true
+    }
+  ]
+}

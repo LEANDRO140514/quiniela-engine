@@ -1,0 +1,339 @@
+{
+  "name": "Reservar Cabañas",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FechaInicio\": \"2025-07-09T14:00:00\",\n  \"FechaFin\": \"2025-07-14T10:00:00\",\n  \"Nombre\":\"Ignacio Arruvito\",\n  \"Telefono\":\"5491160390755\",\n\"Correo\":\"nacho.arg200312@gmail.com\"\n}"
+      },
+      "id": "641f2c48-1003-451a-b983-7c216281e3fc",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        272
+      ],
+      "id": "356a831d-0f31-4e77-9481-cc6d86ac418c",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "rTSt6FnagO3Pruoq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Fecha Inicio: {{ $json.FechaInicio }}\nFecha Fin: {{ $json.FechaFin }}\nNombre usuario: {{ $('When Executed by Another Workflow').item.json.Nombre }}\nNumero de telefono: {{ $('When Executed by Another Workflow').item.json.Telefono }}\nCorreo Electronico: {{ $('When Executed by Another Workflow').item.json.Correo }}\nFecha actual: {{ $now }}",
+        "options": {
+          "systemMessage": "=# IDENTIDAD:\nEres un **asistente automatizado encargado de todo el procedimiento para reservar citas de atención al cliente**.\n\n# HERRAMIENTAS DISPONIBLES: \n- \"ComprobarDisponibilidad\": Confirma si hay disponibilidad en la fecha indicada.  \n- \"EntregarHorarios\": Proporciona horarios alternativos si no hay disponibilidad.\n- \"CrearCita\": Crea la cita en el calendario.\n\n# OBJETIVO PRINCIPAL:\nEl agente tiene como propósito **verificar y gestionar automáticamente la reserva de citas de los clientes**, asegurando que las fechas sean válidas, haya disponibilidad y se complete todo el proceso de creación y registro de la cita.\n\n# INSTRUCCIONES ESPECÍFICAS:\n\n1. Usar \"ComprobarDisponibilidad\".  \n2. Si hay disponibilidad, continuar con:\n   - \"CrearCita\"\n   \n3. Si no hay disponibilidad, usar \"EntregarHorarios\" para ofrecer alternativas al cliente.\n\nFORMATO RESPUESTA:\n{\n  \"Respuesta\": \"Su cita ha sido reservada exitosamente para el {}. Aquí tienes los detalles de la reserva:\\n- Nombre: {{ $('When Executed by Another Workflow').item.json.Nombre }}\\n- Teléfono: {{ $('When Executed by Another Workflow').item.json.Telefono }}\\n- Fecha: {Desde {{ $json.FechaInicio }} hasta {{ $json.FechaFin }}}\\n- Link: {link de la cita}\n\"Respuesta 2\": \"No hay reserva para la fecha solicitada, estos son las reservas disponibles:\n}\n\n# IMPORTANTE:\n- La fecha de hoy es {{ $now }}\n- Entrega las reservas ordenadamente.\n\n- No utilices asteriscos ni ningún formato de texto (como negritas o cursivas) en las respuestas. El texto debe presentarse de forma simple, sin símbolos especiales.\n\n- **Asegúrate de enviar el link correcto de la reunión, para que el usuario pueda entrar sin problemas.\n\n- Si no hay disponibilidad, NO debes agendar la reserva."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        672,
+        0
+      ],
+      "id": "a8e78a3c-b65e-4727-a5bf-409a3337b877",
+      "name": "Agente reservar",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "timeMin": "={{ $('When Executed by Another Workflow').item.json.FechaInicio }}",
+        "timeMax": "={{ $('When Executed by Another Workflow').item.json.FechaFin }}",
+        "options": {
+          "outputFormat": "availability",
+          "timezone": {
+            "__rl": true,
+            "value": "America/Argentina/Buenos_Aires",
+            "mode": "list",
+            "cachedResultName": "America/Argentina/Buenos_Aires"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        752,
+        272
+      ],
+      "id": "bd918122-0e82-4ff6-b97e-f934eb9a5925",
+      "name": "ComprobarDisponibilidad",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "start": "={{ $('When Executed by Another Workflow').item.json.FechaInicio }}",
+        "end": "={{ $('When Executed by Another Workflow').item.json.FechaFin }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $('When Executed by Another Workflow').item.json.Correo }}"
+          ],
+          "summary": "=Reserva: {{ $('When Executed by Another Workflow').item.json.Nombre }} {{ $('When Executed by Another Workflow').item.json.Telefono }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        912,
+        272
+      ],
+      "id": "26aca259-21ee-4b7c-8b16-921f8af4f91f",
+      "name": "CrearCita",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.1,
+          "topP": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        544,
+        272
+      ],
+      "id": "cd5f6811-f95e-40d6-b13c-8c563f8fc1af",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LvLMQXrAcIeQa1Qm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "EntregarHorarios",
+        "description": "Eres la herramienta encargada de entregar la reserva disponible más cercana cuando no hay disponibilidad.",
+        "workflowId": {
+          "__rl": true,
+          "value": "KamVtCxjBnnEqEvO",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KamVtCxjBnnEqEvO",
+          "cachedResultName": "EntregarHorarios Cabañas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FechaInicio": "={{ $('When Executed by Another Workflow').item.json.FechaInicio }}",
+            "FechaFin": "={{ $('When Executed by Another Workflow').item.json.FechaFin }}"
+          },
+          "matchingColumns": [
+            "Fecha"
+          ],
+          "schema": [
+            {
+              "id": "FechaInicio",
+              "displayName": "FechaInicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "FechaFin",
+              "displayName": "FechaFin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1088,
+        272
+      ],
+      "id": "f9781219-37f1-433f-b0f6-98b6b083fbca",
+      "name": "EntregarHorarios"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ENkRjmKsV7sIY8W6H17yBG_VGk5Z-6_lM8VBlEvTBiE",
+          "mode": "list",
+          "cachedResultName": "Preguntas Cabañas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ENkRjmKsV7sIY8W6H17yBG_VGk5Z-6_lM8VBlEvTBiE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ENkRjmKsV7sIY8W6H17yBG_VGk5Z-6_lM8VBlEvTBiE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "={{ $json.Telefono }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        0
+      ],
+      "id": "6ba65fc3-3d7b-4ecf-b842-a8a8b4c4a6bf",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente reservar",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ComprobarDisponibilidad": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente reservar",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CrearCita": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente reservar",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "EntregarHorarios": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente reservar",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Agente reservar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "71064b59-75fb-4e87-b0bf-b7e3ccd756c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "9TOOvQEFwC9aqmFz",
+  "tags": []
+}

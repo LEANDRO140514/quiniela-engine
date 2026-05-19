@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "verticals/dental/schemas/procedure.schema.json",
+  "title": "Procedure",
+  "description": "Procedimiento dental con duración, precio y cuidados",
+  "type": "object",
+  "required": ["id", "category", "name", "durationMinutes", "description"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^proc-\\d{3}$" },
+    "category": { "type": "string", "const": "procedure" },
+    "name": { "type": "string", "minLength": 3 },
+    "durationMinutes": { "type": "integer", "minimum": 10 },
+    "description": { "type": "string", "minLength": 10 },
+    "preparation": { "type": "string" },
+    "aftercare": { "type": "string" },
+    "priceRange": {
+      "type": "object",
+      "required": ["min", "max", "currency"],
+      "properties": {
+        "min": { "type": "number", "minimum": 0 },
+        "max": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "const": "MXN" }
+      }
+    },
+    "tags": { "type": "array", "items": { "type": "string" } }
+  }
+}

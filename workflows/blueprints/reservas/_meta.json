@@ -1,0 +1,26 @@
+{
+  "domain": "reservas",
+  "title": "Reservation Workflows",
+  "description": "Blueprints de gestión de reservas de alojamiento (cabañas). Sub-workflows atómicos para reservar, modificar, cancelar, comprobar disponibilidad y entregar horarios. Canal actual: Chatwoot.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "reservation-engine",
+    "calendar-engine",
+    "workflow-orchestrator"
+  ],
+  "providersObserved": [
+    "chatwoot",
+    "openai",
+    "google-calendar"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Diferente al dominio calendar (citas): las reservas manejan rangos de días, precios por noche y coordinación con propietario. Chatwoot es el adapter actual de mensajería; el engine debe ser agnóstico al canal."
+}

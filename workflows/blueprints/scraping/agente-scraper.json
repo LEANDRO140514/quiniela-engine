@@ -1,0 +1,286 @@
+{
+  "name": "Agente_Scraper",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4eba3bab-e0c2-4c26-a9d8-0477a81db0a9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"includeWebResults\": false,\n    \"language\": \"es-419\",\n    \"locationQuery\": \"Buenos Aires, Argentina\",\n    \"maxCrawledPlacesPerSearch\": 100,\n    \"maxImages\": 0,\n    \"maximumLeadsEnrichmentRecords\": 0,\n    \"placeMinimumStars\": \"fourAndHalf\",\n    \"scrapeContacts\": false,\n    \"scrapeDirectories\": false,\n    \"scrapeImageAuthors\": false,\n    \"scrapePlaceDetailPage\": false,\n    \"scrapeReviewsPersonalData\": true,\n    \"scrapeTableReservationProvider\": false,\n    \"searchStringsArray\": [\n        \"peluquería\",\n        \"peluqueria\"\n    ],\n    \"skipClosedPlaces\": false\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c490bca0-dff9-4ab3-99a5-25ac8ad3bf4c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cd97b035-0b84-4955-815b-6b70cec86faf",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "d29bd773-618e-4587-9cc3-9a558e9e25e2",
+              "name": "address",
+              "value": "={{ $json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "154a4cb1-f7f6-4233-9707-9542f13acf20",
+              "name": "city",
+              "value": "={{ $json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "d0f0c05c-9654-40e8-9d96-97c3c0f8dfd7",
+              "name": "countryCode",
+              "value": "={{ $json.countryCode }}",
+              "type": "string"
+            },
+            {
+              "id": "4674a232-a84a-4edd-87ae-35918d548d08",
+              "name": "phone",
+              "value": "={{ $json.phoneUnformatted.replace('+', '') }}",
+              "type": "string"
+            },
+            {
+              "id": "856a3884-bb55-4a66-a97c-76dc016de7fc",
+              "name": "totalScore",
+              "value": "={{ $json.totalScore }}",
+              "type": "number"
+            },
+            {
+              "id": "e9500c37-1f59-400d-b214-c32f47078888",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "617ffa9e-a671-40f5-8f65-51b7f7cc426a",
+              "name": "website",
+              "value": "={{ $json.website }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "6ee67c52-d4cb-45cc-a9ba-068783d08ab9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-uWb6EptBDABbMK9RZSK0N54rneGfZBjyyZv8P9-rBk",
+          "mode": "list",
+          "cachedResultName": "Leads Pelu",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-uWb6EptBDABbMK9RZSK0N54rneGfZBjyyZv8P9-rBk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-uWb6EptBDABbMK9RZSK0N54rneGfZBjyyZv8P9-rBk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Empresa": "={{ $json.title }}",
+            "Dirección": "={{ $json.address }}",
+            "Ciudad": "={{ $json.city }}",
+            "País": "={{ $json.countryCode }}",
+            "Teléfono": "={{ $json.phone !== undefined && $json.phone !== null && $json.phone !== '' ? $json.phone : 'No tiene teléfono' }}",
+            "Estrellas": "={{ $json.totalScore }}",
+            "Sitio Web": "={{ $json.website }}",
+            "URL": "={{ $json.url }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Dirección",
+              "displayName": "Dirección",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "País",
+              "displayName": "País",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ciudad",
+              "displayName": "Ciudad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Teléfono",
+              "displayName": "Teléfono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estrellas",
+              "displayName": "Estrellas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sitio Web",
+              "displayName": "Sitio Web",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        624,
+        0
+      ],
+      "id": "5f5c36df-7492-46a5-a3c5-2b060a48b851",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "47d99dff-4cdd-44ba-a159-67d5b5bc7f7a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c51ad1839a2b94fe998720cbb12ec31aeaf911935a64ba3a674a34c8e1fe57cb"
+  },
+  "id": "FSthEY0icaFIso0R",
+  "tags": []
+}

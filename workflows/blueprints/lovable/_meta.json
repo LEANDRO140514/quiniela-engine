@@ -1,0 +1,25 @@
+{
+  "domain": "lovable",
+  "title": "Lovable App Generation Workflows",
+  "description": "Blueprints de gestión conversacional de CRM vía lenguaje natural, integrado con Lovable como plataforma de generación de apps. Operaciones CRUD sobre pipeline de ventas con confirmación en español.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "generation-engine",
+    "app-builder-engine"
+  ],
+  "providersObserved": [
+    "google-sheets",
+    "openai",
+    "lovable"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Google Sheets es el adapter actual de CRM; futuro: GHL. El patrón de agente con herramientas Crear/Actualizar es el núcleo reutilizable. El schema (Empresa, Contacto, Prioridad, EtapaPipeline, Canal, Owner) es el contrato de datos."
+}

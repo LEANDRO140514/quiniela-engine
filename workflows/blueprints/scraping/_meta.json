@@ -1,0 +1,25 @@
+{
+  "domain": "scraping",
+  "title": "Scraping & Data Extraction Workflows",
+  "description": "Blueprints de prospección masiva de leads desde Google Maps via APIs de scraping intermediarias. Extracción, normalización de campos y volcado al adapter de destino.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "scraper-engine",
+    "data-ingestion-engine"
+  ],
+  "providersObserved": [
+    "bright-data",
+    "google-maps",
+    "google-sheets"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Bright Data es el proveedor actual de scraping API. Google Sheets es el adapter de destino actual; futuro: GHL o Supabase. El schema de campos normalizados (Empresa, Dirección, Teléfono, Estrellas, Sitio Web, URL) es el contrato de salida."
+}

@@ -1,0 +1,29 @@
+{
+  "domain": "voice",
+  "title": "Voice Agent Workflows",
+  "description": "Blueprints de agente de voz con VAPI. Manejo de tool calls en tiempo real durante la llamada y análisis post-llamada (sentimiento, intención) via end-of-call-report. MCPs para calendario, email y base de datos.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "voice-engine",
+    "mcp-engine",
+    "workflow-orchestrator"
+  ],
+  "providersObserved": [
+    "vapi",
+    "google-sheets",
+    "gmail",
+    "google-calendar",
+    "openai",
+    "gemini"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "VAPI es el proveedor de voz actual. Google Sheets, Gmail y Google Calendar son adapters actuales; futuros: GHL (CRM + Mail + Calendar). El patrón de bifurcación end-of-call vs tool-call es la lógica determinística central del engine."
+}

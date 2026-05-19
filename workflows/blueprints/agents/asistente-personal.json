@@ -1,0 +1,1296 @@
+{
+  "name": "Asistente_Personal",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -960,
+        160
+      ],
+      "id": "3bca5421-a097-4930-935c-2309fd036e70",
+      "name": "Telegram Trigger",
+      "webhookId": "be0f74d0-76b4-4ac4-ab1d-b9a9e51252f4",
+      "credentials": {
+        "telegramApi": {
+          "id": "W2lXISyvOzLYjARd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "2de0e1d8-b75f-4504-af83-7f8c0bf31740"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b8952dfe-545d-495a-a5ce-4094deef7bd2",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e041e04e-5ffb-42a5-9642-79e3affbd40c",
+                    "leftValue": "={{ $json.message.photo[0].file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "imagen"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -720,
+        160
+      ],
+      "id": "79455b7e-497e-40c4-91e9-abf1d176bd58",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8785e0f6-f706-4415-9994-ffe55e68c6a3",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -20,
+        -20
+      ],
+      "id": "039f1b1d-4096-4ab1-927e-a9e8d4429c57",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Merge').item.json.text }} ",
+        "options": {
+          "systemMessage": "=#Descripción General:\nEres mi agente de finanzas personal, te encargas de añadir los gastos y los ingresos que te voy diciendo utilizando las herramientas que tienes a continuación y me dirás la información de los gastos o ingresos según te lo solicite, a parte también te encargas de agendarme citas y añadir contactos nuevos, también pueden enviar email y mensajes de texto a los contactos cuando yo te lo pida. Utiliza un tono formal, al mismo tiempo, genera cercanía y confianza. \n\n##Herramientas:\n-(Calculadora) sirve para que puedas realizar las operaciones necesarias cuando te pida datos en los que necesites hacer operaciones matemáticas.\n-(Gastos) Aquí añadirás los gastos que te vaya diciendo\n-(Ver Gastos) te servirá para consultar los gastos que he tenido.\n-(Ingresos) Aquí añadirás los ingresos que te vaya diciendo\n-(Ver Ingresos) te servirá para consultar los ingresos que he realizado.\n-(Contactos) te sirve para crear contactos nuevos\n-(Ver Contactos) Te sirve para enviar mensajes y también email a los contactos y recibir la información de los contactos.\n-(Gmail) sirve para enviar email\n-(AGREGAR CITAS) sirve para añdir citas al calenadrio\n-(VER CITAS) sirve para obtener información de las citas\n\n## Reglas\nAnalizá el mensaje del usuario ya procesado, y ejecutá exclusivamente la herramienta que corresponda según el valor de la variable Intencion.\n\nEsta variable ya fue determinada por otro nodo, no la analices vos. Solo actuá en base a su contenido.\n\nSi Intencion es \"gasto\", usá la herramienta Gastos.\n\nSi Intencion es \"ingreso\", usá la herramienta Ingresos.\n\nSi Intencion es \"cita\", usá la herramienta VER CITAS o AGENDAR CITA según el caso.\n\nSi Intencion es \"contacto\", usá la herramienta Contactos.\n\nSi Intencion es \"otro\", no ejecutes ninguna herramienta. En su lugar, respondé que no se detectó una acción específica.\n\n⚠️ Bajo ninguna circunstancia ejecutes herramientas que no correspondan al valor de Intencion.\n\nCuando el usuario mencione beneficio, ganancia neta, resultado neto o beneficio total, no lo confundas con un ingreso bruto.\nUn ingreso es el dinero que entra, mientras que el beneficio es el resultado de ingresos menos gastos.\n\nNO añadas ni envies enlaces de ningún tipo al usuario.\n\nNo preguntes la duración del evento en calendario, asume que todos duran 1 hora.\nCuando envies los datos al sheet rellena los datos correctamente.\nAsegurate de añadir las citas al calendario en la fecha correcta\nSi ya lo has enviado en el mismo chat no vuelvas a enviarlo.\n\n## Recordatorios Finales  \nLa fecha y hora actuales son: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        960,
+        380
+      ],
+      "id": "40ed0baf-909e-411f-a1cb-4f4f01ddfa4f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        600,
+        640
+      ],
+      "id": "b766a6d2-6a81-4968-92e2-62bfd03e4dd8",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "XMiXPLZZlRO9MdnT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{$('Telegram Trigger').first().json.update_id}}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        760,
+        640
+      ],
+      "id": "1af8a104-0333-45b8-ad9d-4ce1872fcbae",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        780
+      ],
+      "id": "4eb3146f-6a5a-4918-a317-67f813825977",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ts9Thl51PVXxlue56tbz-aJcHQpBarJSDnr22GfiNns",
+          "mode": "list",
+          "cachedResultName": "Gastos Mensuales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ts9Thl51PVXxlue56tbz-aJcHQpBarJSDnr22GfiNns/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ts9Thl51PVXxlue56tbz-aJcHQpBarJSDnr22GfiNns/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Dia": "={{ $('Code').item.json.Gasto_Dia }}",
+            "Mes": "={{ $('Code').item.json.Gasto_Mes }}",
+            "Año": "={{ $('Code').item.json['Gasto_Año'] }}",
+            "Tipo de gasto": "={{ $('Code').item.json.Gasto_Tipo }}",
+            "Importe": "={{ $('Code').item.json.Gasto_Importe }}",
+            "Moneda": "={{ $('Code').item.json.Gasto_Moneda }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Tipo de gasto",
+              "displayName": "Tipo de gasto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Importe",
+              "displayName": "Importe",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Moneda",
+              "displayName": "Moneda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Dia",
+              "displayName": "Dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mes",
+              "displayName": "Mes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Año",
+              "displayName": "Año",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1320,
+        780
+      ],
+      "id": "2d498928-af3f-45c8-9f95-248e737957a9",
+      "name": "Gastos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yUEWTU3XEg82rXye",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1dFvHcErm58H-l9hDYVU98ch1DM4hfd2UlXOCPtzBN7g",
+          "mode": "list",
+          "cachedResultName": "Ingresos Mensuales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dFvHcErm58H-l9hDYVU98ch1DM4hfd2UlXOCPtzBN7g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dFvHcErm58H-l9hDYVU98ch1DM4hfd2UlXOCPtzBN7g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tipo de Ingreso": "={{ $('Code').item.json.Ingreso_Origen }}",
+            "Importe": "={{ $('Code').item.json.Ingreso_Importe }}",
+            "Dia": "={{ $('Code').item.json.Ingreso_Dia }}",
+            "Mes": "={{ $('Code').item.json.Ingreso_Mes }}",
+            "Año": "={{ $('Code').item.json['Ingreso_Año'] }}",
+            "Moneda": "={{ $('Code').item.json.Ingreso_Moneda }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Tipo de Ingreso",
+              "displayName": "Tipo de Ingreso",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Importe",
+              "displayName": "Importe",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Moneda",
+              "displayName": "Moneda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Dia",
+              "displayName": "Dia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mes",
+              "displayName": "Mes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Año",
+              "displayName": "Año",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1560,
+        780
+      ],
+      "id": "ae344e9b-30bc-4bab-a6bb-935f0b7f40b0",
+      "name": "Ingresos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yUEWTU3XEg82rXye",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ts9Thl51PVXxlue56tbz-aJcHQpBarJSDnr22GfiNns",
+          "mode": "list",
+          "cachedResultName": "Gastos Mensuales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ts9Thl51PVXxlue56tbz-aJcHQpBarJSDnr22GfiNns/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ts9Thl51PVXxlue56tbz-aJcHQpBarJSDnr22GfiNns/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1440,
+        780
+      ],
+      "id": "90a9a12c-471a-4dd0-b912-3a3b0b32069d",
+      "name": "Ver Gastos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yUEWTU3XEg82rXye",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1dFvHcErm58H-l9hDYVU98ch1DM4hfd2UlXOCPtzBN7g",
+          "mode": "list",
+          "cachedResultName": "Ingresos Mensuales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dFvHcErm58H-l9hDYVU98ch1DM4hfd2UlXOCPtzBN7g/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dFvHcErm58H-l9hDYVU98ch1DM4hfd2UlXOCPtzBN7g/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1700,
+        780
+      ],
+      "id": "ddf003c4-63a5-4132-972a-547d7472bb02",
+      "name": "Ver Ingresos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yUEWTU3XEg82rXye",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WTL-zRJzO3A65ihtcjngDF2Z1DFUc6IWknSesF_dw2k",
+          "mode": "list",
+          "cachedResultName": "Contactos Nuevos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WTL-zRJzO3A65ihtcjngDF2Z1DFUc6IWknSesF_dw2k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WTL-zRJzO3A65ihtcjngDF2Z1DFUc6IWknSesF_dw2k/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre": "={{ $('Code').item.json.Contacto_Nombre }}",
+            "Telefono": "={{ $('Code').item.json.Contacto_Telefono }}",
+            "E-mail": "={{ $('Code').item.json.Contacto_Email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefono",
+              "displayName": "Telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "E-mail",
+              "displayName": "E-mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1840,
+        780
+      ],
+      "id": "229b8003-780f-49f0-9cf9-3960a06bec3a",
+      "name": "Contactos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yUEWTU3XEg82rXye",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1WTL-zRJzO3A65ihtcjngDF2Z1DFUc6IWknSesF_dw2k",
+          "mode": "list",
+          "cachedResultName": "Contactos Nuevos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WTL-zRJzO3A65ihtcjngDF2Z1DFUc6IWknSesF_dw2k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WTL-zRJzO3A65ihtcjngDF2Z1DFUc6IWknSesF_dw2k/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1980,
+        780
+      ],
+      "id": "ee0fd880-0fe0-4ccc-ace6-6ea12e639692",
+      "name": "Ver Contactos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yUEWTU3XEg82rXye",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        840,
+        160
+      ],
+      "id": "b4654eae-bad1-4509-9425-fa5bf412cf03",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = $input.item.json.text?.toLowerCase() || $input.item.json.texto_original?.toLowerCase() || \"\";\nconst fechaActual = new Date();\nlet output = {};\n\n// Preprocesar el texto para que sea una línea continua\nconst textoPlano = mensaje.replace(/\\n/g, \" \").replace(/\\s+/g, \" \").trim();\n\n// === INTENCIÓN ===\nlet intencion = \"otro\";\n\nconst clavesGasto = [\n  \"gasto\", \"gaste\", \"gasté\",\n  \"compre\", \"compré\",\n  \"pague\", \"pagé\", \"pagué\",\n  \"salida\", \"salidas\",\n  \"inverti\", \"invertí\",\n  \"anota\", \"anotá\", \"anote\",\n  \"añadi\", \"añadí\"\n];\nconst clavesIngreso = [\n  \"ingrese\", \"ingresé\", \"ingreso\",\n  \"recibi\", \"recibí\",\n  \"cobre\", \"cobré\",\n  \"gane\", \"gané\",\n  \"me pagaron\", \"pagaron\",\n  \"deposite\", \"deposité\"\n];\nconst clavesCita = [\n  \"reunion\", \"reunión\",\n  \"agenda\", \"agendar\", \"agendá\",\n  \"cita\", \"turno\",\n  \"reservar\", \"reserva\",\n  \"agenda una llamada\", \"llamada\",\n  \"nos juntamos\", \"juntarnos\", \"juntarnos a charlar\"\n];\nconst clavesContacto = [\n  \"agrega\", \"agregá\", \"añadí\", \"añadir\", \n  \"guardar contacto\", \"nuevo contacto\", \"contacto\",\n  \"quiero agregar\", \"anotá el contacto\", \"guardar a\", \"añade\"\n];\nconst clavesBeneficio = [\n  \"beneficio\", \"beneficios\", \"ganancia neta\", \"resultado final\", \"ganancias totales\", \n  \"resultado neto\", \"beneficio total\", \"saldo final\", \"cuanto gané\", \"cuanto gane\"\n];\n\nif (clavesGasto.some(p => textoPlano.includes(p))) {\n  intencion = \"gasto\";\n} else if (clavesIngreso.some(p => textoPlano.includes(p))) {\n  intencion = \"ingreso\";\n} else if (clavesBeneficio.some(p => textoPlano.includes(p))) {\n  intencion = \"beneficio\";\n} else if (clavesCita.some(p => textoPlano.includes(p))) {\n  intencion = \"cita\";\n} else if (clavesContacto.some(p => textoPlano.includes(p))) {\n  intencion = \"contacto\";\n}\n\noutput.Intencion = intencion;\n\n// === GASTO ===\nif (intencion === \"gasto\") {\n  const patronesGasto = [\n    /(inverti|gasté|gaste|anotá|anota|añadí|añade|compré|compre|pagué|pague)\\s+(en\\s+)?(.+?)\\s+(\\d{1,3}(?:[.,]?\\d{3})*)(\\s*(?:ars|usd|eur|pesos|dólares)?)?/i,\n    /(\\d{1,3}(?:[.,]?\\d{3})*)\\s+en\\s+(.+)/i\n  ];\n\n  for (const regex of patronesGasto) {\n    const match = textoPlano.match(regex);\n    if (match) {\n      let importe = 0;\n      let tipo = \"\";\n\n      // Determinar si la cantidad está al final o al principio\n      if (match.length >= 5) {\n        tipo = match[3]?.trim().toLowerCase() || match[2]?.trim().toLowerCase() || \"sin especificar\";\n        importe = parseFloat(match[4].replace(/[^\\d]/g, \"\"));\n      } else {\n        importe = parseFloat(match[1].replace(/[^\\d]/g, \"\"));\n        tipo = match[2]?.trim().toLowerCase() || \"sin especificar\";\n      }\n\n      // Normalizar tipo de gasto\n      tipo = tipo.replace(/\\b(hoy|ayer|mañana)\\b/gi, \"\").trim();\n\n      // Detectar fecha\n      const fechaGasto = new Date(fechaActual);\n      if (textoPlano.includes(\"ayer\")) fechaGasto.setDate(fechaGasto.getDate() - 1);\n\n      // Variables de salida\n      output.Gasto_Tipo = tipo;\n      output.Gasto_Importe = importe;\n      output.Gasto_Moneda = \"ARS\"; // o detectar si se menciona explícitamente otra\n      output.Gasto_Dia = fechaGasto.getDate();\n      output.Gasto_Mes = fechaGasto.getMonth() + 1;\n      output.Gasto_Año = fechaGasto.getFullYear();\n      output.Gasto_Titulo = `Gasto en ${tipo} - $${importe.toLocaleString(\"es-AR\")} ARS`;\n\n      break;\n    }\n  }\n}\n\n\n// === INGRESO ===\nif (intencion === \"ingreso\") {\n  const patronesIngreso = [\n    /(ingresé|ingrese|recibí|recibi|gané|gane|cobré|cobre|me pagaron|pagaron|deposité|deposite)\\s+(\\d{1,3}(?:[.,]?\\d{3})*)(?:\\s*(ars|usd|eur|pesos|dólares)?)?\\s*(?:por|en|de)?\\s*(.*)?/i,\n    /(\\d{1,3}(?:[.,]?\\d{3})*)\\s+(?:de\\s+)?(.*)/i\n  ];\n\n  for (const regex of patronesIngreso) {\n    const match = textoPlano.match(regex);\n    if (match) {\n      let importe = 0;\n      let origen = \"\";\n      \n      if (match.length >= 5) {\n        importe = parseFloat(match[2].replace(/[^\\d]/g, \"\"));\n        origen = match[4]?.trim().toLowerCase() || \"sin especificar\";\n      } else if (match.length === 3) {\n        importe = parseFloat(match[1].replace(/[^\\d]/g, \"\"));\n        origen = match[2]?.trim().toLowerCase() || \"sin especificar\";\n      }\n\n      // Normalización\n      origen = origen.replace(/\\b(hoy|ayer|mañana)\\b/gi, \"\").trim();\n\n      // Fecha del ingreso\n      const fechaIngreso = new Date(fechaActual);\n      if (/ayer/i.test(textoPlano)) fechaIngreso.setDate(fechaIngreso.getDate() - 1);\n\n      // Variables de salida\n      output.Ingreso_Origen = origen;\n      output.Ingreso_Importe = importe;\n      output.Ingreso_Moneda = \"ARS\"; // o adaptar si detectás otras monedas\n      output.Ingreso_Dia = fechaIngreso.getDate();\n      output.Ingreso_Mes = fechaIngreso.getMonth() + 1;\n      output.Ingreso_Año = fechaIngreso.getFullYear();\n      output.Ingreso_Titulo = `Ingreso de ${origen} - $${importe.toLocaleString(\"es-AR\")} ARS`;\n\n      break;\n    }\n  }\n}\n\n\n// === CONTACTO ===\nif (intencion === \"contacto\") {\n  // Extraer email\n  const emailMatch = textoPlano.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);\n  if (emailMatch) {\n    output.Contacto_Email = emailMatch[0].trim();\n  }\n\n  // Extraer teléfono\n  const telefonoMatch = textoPlano.match(/(?:\\D|^)(\\+?\\d{6,})(?:\\D|$)/);\n  if (telefonoMatch) {\n    const numero = telefonoMatch[1].replace(/\\D/g, \"\");\n    output.Contacto_Telefono = numero.startsWith(\"54\") ? `+${numero}` : `+54${numero}`;\n  }\n\n  // === Nombre explícito ===\n  const nombreMatch = textoPlano.match(/(?:añade|agrega(?:r)?|contacto a|nombre de|guardar a|anotá a|añadir a)\\s+a?\\s*([a-záéíóúñÑ]{2,}(?:\\s+[a-záéíóúñÑ]{2,}){0,3})/i);\n  if (nombreMatch) {\n    output.Contacto_Nombre = nombreMatch[1].trim();\n  } else {\n    // === Fallback: quitar email, teléfono y verbos comunes ===\n    const limpio = textoPlano\n      .replace(output.Contacto_Telefono ?? \"\", \"\")\n      .replace(output.Contacto_Email ?? \"\", \"\")\n      .replace(/(añade|agrega(?:r)?|contacto a|nombre de|guardar a|anotá a|añadir a)/gi, \"\")\n      .replace(/[.,]/g, \"\")\n      .trim();\n\n    const posibleNombre = limpio.match(/[a-záéíóúñÑ\\s]{4,}/i)?.[0]?.trim();\n\n    if (posibleNombre && posibleNombre.length > 4) {\n      output.Contacto_Nombre = posibleNombre;\n    }\n  }\n\n  // === Construcción final ===\n  if (output.Contacto_Nombre || output.Contacto_Telefono || output.Contacto_Email) {\n    const nombre = output.Contacto_Nombre ?? \"Nombre desconocido\";\n    const tel = output.Contacto_Telefono ?? \"Sin teléfono\";\n    const mail = output.Contacto_Email ?? \"Sin email\";\n    output.Contacto_Titulo = `Contacto: ${nombre} - 📞 ${tel} - ✉️ ${mail}`;\n  }\n}\n\n\n\n\n// === CITA ===\nif (intencion === \"cita\") {\n  const citaRegex = /(?:el\\s+)?(?:día\\s+)?(\\d{1,2})[\\/\\-\\.](\\d{1,2})(?:[\\/\\-\\.](\\d{2,4}))?.*?(?:a\\s+las\\s+)?(\\d{1,2})(?::(\\d{2}))?/i;\n  const citaRelativa = /(mañana|pasado mañana|hoy|lunes|martes|miércoles|jueves|viernes|sábado|domingo).*?(\\d{1,2})(?::(\\d{2}))?/i;\n\n  function getFechaRelativa(palabra) {\n    const dias = [\"domingo\",\"lunes\",\"martes\",\"miércoles\",\"jueves\",\"viernes\",\"sábado\"];\n    const hoy = new Date();\n    const hoyNum = hoy.getDay();\n    const idx = dias.indexOf(palabra);\n    let diff = idx - hoyNum;\n    if (diff <= 0) diff += 7;\n    hoy.setDate(hoy.getDate() + diff);\n    return hoy;\n  }\n\n  let fecha;\n  let match = textoPlano.match(citaRegex);\n  if (match) {\n    const dia = parseInt(match[1]);\n    const mes = parseInt(match[2]) - 1;\n    const año = match[3] ? parseInt(match[3]) : new Date().getFullYear();\n    const hora = parseInt(match[4]);\n    const minutos = match[5] ? parseInt(match[5]) : 0;\n    fecha = new Date(año, mes, dia, hora, minutos);\n  } else if ((match = textoPlano.match(citaRelativa))) {\n    const palabra = match[1].toLowerCase();\n    const hora = parseInt(match[2]);\n    const minutos = match[3] ? parseInt(match[3]) : 0;\n    fecha = new Date();\n    if (palabra === \"mañana\") fecha.setDate(fecha.getDate() + 1);\n    else if (palabra === \"pasado mañana\") fecha.setDate(fecha.getDate() + 2);\n    else if (palabra !== \"hoy\") fecha = getFechaRelativa(palabra);\n    fecha.setHours(hora);\n    fecha.setMinutes(minutos);\n  }\n\n  if (fecha) {\n    const dia = fecha.getDate().toString().padStart(2, \"0\");\n    const mes = (fecha.getMonth() + 1).toString().padStart(2, \"0\");\n    const hora = fecha.getHours().toString().padStart(2, \"0\");\n    const minutos = fecha.getMinutes().toString().padStart(2, \"0\");\n\n    let actividad = \"Evento agendado\";\n    if (textoPlano.includes(\"dentista\")) actividad = \"Dentista\";\n    else if (textoPlano.includes(\"reunión\")) actividad = \"Reunión\";\n    else if (textoPlano.includes(\"fútbol\")) actividad = \"Partido de fútbol\";\n    else if (textoPlano.includes(\"llamada\")) actividad = \"Llamada\";\n    else if (textoPlano.includes(\"médico\")) actividad = \"Cita médica\";\n    else if (output.Contacto_Nombre) actividad = `Cita con ${output.Contacto_Nombre}`;\n\n    output.Cita_FechaCompleta = fecha.toISOString();\n    output.Cita_Titulo = `${actividad} - ${dia}/${mes} ${hora}:${minutos}hs`;\n    output.Cita_Dia = parseInt(dia);\n    output.Cita_Mes = parseInt(mes);\n    output.Cita_Año = fecha.getFullYear();\n    output.Cita_Hora = parseInt(hora);\n    output.Cita_Minutos = parseInt(minutos);\n  }\n}\n\n// === FALLBACK ===\nif (Object.keys(output).length === 1) {\n  output.texto_original = textoPlano;\n}\n\nreturn [{ json: output }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        160
+      ],
+      "id": "ce46b6bb-3967-42a5-95eb-c9bdda742d9a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ $fromAI('Message', ``, 'string') }} ",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        2120,
+        780
+      ],
+      "id": "ac71a938-457e-46e1-9acd-8e0aab7ebf6d",
+      "name": "Gmail",
+      "webhookId": "db4358b5-ce03-4328-8596-fa8d4281bb23",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CKo9ynWA3ToFTPWU",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "6f8efdc701544f0db332fefaf760fb3aaa7e1916a95da12890e208b5c1d595cc@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "CITAS ASISTENTE"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "description": "={{ $('Merge').item.json.text }}",
+          "summary": "={{ $('OpenAI').item.json.message.content }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1040,
+        780
+      ],
+      "id": "95b75c6e-a46f-4ff0-8eef-52f7e5463b42",
+      "name": "AGREGAR CITAS",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "gzvSwqz36mhRUGqn",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Busca y nombra todas las citas que existen en el calendario para la fecha que el usuario solicite.",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "6f8efdc701544f0db332fefaf760fb3aaa7e1916a95da12890e208b5c1d595cc@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "CITAS ASISTENTE"
+        },
+        "returnAll": true,
+        "options": {
+          "timeZone": {
+            "__rl": true,
+            "value": "America/Argentina/Buenos_Aires",
+            "mode": "list",
+            "cachedResultName": "America/Argentina/Buenos_Aires"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        900,
+        780
+      ],
+      "id": "05691940-6996-48d1-a147-961260972903",
+      "name": "VER CITAS",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "gzvSwqz36mhRUGqn",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        160
+      ],
+      "id": "34172faf-3cc6-4b4d-a39e-1681f18dd279",
+      "name": "Audio Telegram",
+      "webhookId": "19fae0ff-7795-443a-90c5-4291fbe6ae06",
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "W2lXISyvOzLYjARd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$('Telegram Trigger').first().json.message.chat.id}}",
+        "text": "={{ $('AI Agent').item.json.output }} ",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1720,
+        380
+      ],
+      "id": "0e63d8d5-c0e9-49b2-a810-98bb8d65405b",
+      "name": "Enviar Mensaje",
+      "webhookId": "a12d0a29-3a06-4cd6-9d22-8757e28af558",
+      "notesInFlow": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "W2lXISyvOzLYjARd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        240,
+        160
+      ],
+      "id": "2c1c2a0f-6b3b-4d16-9766-29068d2aad7b",
+      "name": "Transcriptor",
+      "credentials": {
+        "openAiApi": {
+          "id": "XMiXPLZZlRO9MdnT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c110c9a8-c7c6-4c62-810a-89fecdd2a79e",
+              "name": "Cita_Titulo",
+              "value": "={{$json[\"output\"]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1460,
+        380
+      ],
+      "id": "fc35d75e-e312-4df2-a314-7dc58fd70976",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Cuando el usuario solicite crear un evento en el calendario, utiliza este mensaje del usuario: \"{{ $('Merge').item.json.text }}\", para generar un resumen del tema de la cita para utilizar cómo título del evento del calendario (intenta hacer un título corto y recordable, sin agregar información nueva). No escribas: \"Título de evento\", sino que describe el evento directamente. Sólo incluye información de la actividad a realizar, NO incluyas ni el día ni el horario de la misma.\n\nEjemplo: si el usuario quiere agendar una cita con su novia a las 23 del viernes, el título debe ser: \"Cita con mi novia\".\n\nDeberás detectar la intención.\n",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1300,
+        160
+      ],
+      "id": "a1cf7eec-fccf-417d-ac6d-1d12e4ff76fe",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "XMiXPLZZlRO9MdnT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": []
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "result.file_path",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -20,
+        160
+      ],
+      "id": "aea2824b-044a-49c0-8137-8128fdf24099",
+      "name": "Edit Fields2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[0].file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        380
+      ],
+      "id": "792d82e1-aabb-46a6-b55c-46e75b231084",
+      "name": "Telegram",
+      "webhookId": "e39a03db-b511-41ed-9126-85b3b6d5b666",
+      "credentials": {
+        "telegramApi": {
+          "id": "W2lXISyvOzLYjARd",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "=Describe detalladamente la imagen enviada por el usuario",
+        "inputType": "base64",
+        "binaryPropertyName": "=data",
+        "simplify": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        240,
+        380
+      ],
+      "id": "41e33fd5-cf6e-48a8-9cec-ab5d2736177b",
+      "name": "OpenAI1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "XMiXPLZZlRO9MdnT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        380
+      ],
+      "id": "97204427-b1ca-4b68-863f-168f697331e3",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        380
+      ],
+      "id": "588509ea-9bf5-49a4-9342-e9ea1e8a3607",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.choices[0].message.content }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        380
+      ],
+      "id": "e582c791-4743-4d1b-b065-1411afb3c4fd",
+      "name": "Telegram1",
+      "webhookId": "b586d9e9-397e-4d8d-9943-b729df7cb56e",
+      "credentials": {
+        "telegramApi": {
+          "id": "W2lXISyvOzLYjARd",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Audio Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gastos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ingresos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ver Gastos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ver Ingresos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contactos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ver Contactos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AGREGAR CITAS": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VER CITAS": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio Telegram": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcriptor": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Enviar Mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Transcriptor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "9434c113-48f0-4f6c-9372-e12084e677bc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "199f6d333455b2e69ef41dab779f8eaf7db9ec996f622d983904caf3b522ed73"
+  },
+  "id": "6ArTXbn9QRW1Gcc4",
+  "tags": []
+}

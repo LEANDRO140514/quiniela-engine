@@ -1,0 +1,78 @@
+[
+  {
+    "id": "ins-001",
+    "category": "insurance",
+    "provider": "Seguros Monterrey",
+    "plans": ["Dental Básico", "Dental Plus", "Familiar Premium"],
+    "coverage": {
+      "consulta": "100%",
+      "limpieza": "100% hasta 2 por año",
+      "resinas": "80%",
+      "extracciones": "80%",
+      "coronas": "50%",
+      "ortodoncia": "varía según plan"
+    },
+    "copay": "20% en procedimientos mayores",
+    "annualMaximum": "Según plan contratado",
+    "requiresPreAuthorization": true,
+    "contactNumber": "800-123-4567",
+    "notes": "Presentar credencial vigente en cada visita. La pre-autorización se gestiona en clínica."
+  },
+  {
+    "id": "ins-002",
+    "category": "insurance",
+    "provider": "GNP Dental",
+    "plans": ["Individual", "Familiar"],
+    "coverage": {
+      "consulta": "100%",
+      "limpieza": "100% hasta 2 por año",
+      "resinas": "70%",
+      "extracciones": "100%",
+      "coronas": "60%",
+      "ortodoncia": "50% con tope anual"
+    },
+    "copay": "Varía por procedimiento",
+    "annualMaximum": "$25,000 MXN por asegurado",
+    "requiresPreAuthorization": true,
+    "contactNumber": "800-555-1234",
+    "notes": "La pre-autorización tarda 24-48 horas hábiles. Planificar con anticipación para tratamientos mayores."
+  },
+  {
+    "id": "ins-003",
+    "category": "insurance",
+    "provider": "AXA Dental",
+    "plans": ["Esencial", "Preferente", "Total"],
+    "coverage": {
+      "consulta": "100%",
+      "limpieza": "100% hasta 2 por año",
+      "resinas": "90%",
+      "extracciones": "90%",
+      "coronas": "70%",
+      "ortodoncia": "60% vitalicio"
+    },
+    "copay": "10% en mayoría de procedimientos",
+    "annualMaximum": "$35,000 MXN por asegurado",
+    "requiresPreAuthorization": false,
+    "contactNumber": "800-999-8888",
+    "notes": "Sin necesidad de pre-autorización para procedimientos básicos. Reembolso directo disponible."
+  },
+  {
+    "id": "ins-004",
+    "category": "insurance",
+    "provider": "Pago Directo (Sin Seguro)",
+    "plans": ["N/A"],
+    "coverage": {
+      "consulta": "0%",
+      "limpieza": "0%",
+      "resinas": "0%",
+      "extracciones": "0%",
+      "coronas": "0%",
+      "ortodoncia": "0%"
+    },
+    "copay": "N/A",
+    "annualMaximum": "N/A",
+    "requiresPreAuthorization": false,
+    "contactNumber": null,
+    "notes": "Ofrecemos planes de financiamiento: 3, 6 o 12 meses sin intereses con tarjetas participantes. 10% de descuento por pago de contado en tratamientos mayores a $5,000 MXN."
+  }
+]

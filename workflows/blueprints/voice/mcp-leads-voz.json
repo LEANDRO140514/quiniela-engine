@@ -1,0 +1,438 @@
+{
+  "name": "MCP LEADS VOZ copy",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "21298a08-66f6-40b9-9810-ddb12db42598"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "eb9fd649-2550-40a4-9052-2c525d45e853",
+      "name": "MCP Server Trigger",
+      "webhookId": "21298a08-66f6-40b9-9810-ddb12db42598"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1U8vHMILyUwemyYUPZfmI-U-tFhTDbopclK1xNlG24Og",
+          "mode": "list",
+          "cachedResultName": "LEADS AGENTE DE VOZ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U8vHMILyUwemyYUPZfmI-U-tFhTDbopclK1xNlG24Og/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1U8vHMILyUwemyYUPZfmI-U-tFhTDbopclK1xNlG24Og/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "EMAIL": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('EMAIL', ``, 'string') }}",
+            "NOMBRE": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('NOMBRE', ``, 'string') }}",
+            "APELLIDO": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('APELLIDO', ``, 'string') }}",
+            "DESCRIPCION": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('DESCRIPCION', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "EMAIL"
+          ],
+          "schema": [
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NOMBRE",
+              "displayName": "NOMBRE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "APELLIDO",
+              "displayName": "APELLIDO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TELEFONO",
+              "displayName": "TELEFONO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DESCRIPCION",
+              "displayName": "DESCRIPCION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SENTIMIENTO",
+              "displayName": "SENTIMIENTO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "INTENCIÓN",
+              "displayName": "INTENCIÓN",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        64,
+        256
+      ],
+      "id": "13d7500e-a01f-4186-bdd7-aca5f21c3a65",
+      "name": "AddContactos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk",
+          "mode": "list",
+          "cachedResultName": "LEADS AGENTE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', ``, 'string') }}"
+            },
+            {
+              "lookupColumn": "Teléfono",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values1_Value', ``, 'string') }}"
+            },
+            {
+              "lookupColumn": "Nombre",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values2_Value', ``, 'string') }}"
+            },
+            {
+              "lookupColumn": "Apellidos",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values3_Value', ``, 'string') }}"
+            },
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values4_Value', ``, 'string') }}"
+            },
+            {
+              "lookupColumn": "Descripción",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values5_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        400,
+        0
+      ],
+      "id": "8fdc3051-6c20-4ba1-bce1-4792654d6633",
+      "name": "ObtenerContactos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk",
+          "mode": "list",
+          "cachedResultName": "LEADS AGENTE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email__using_to_match_', ``, 'string') }}",
+            "ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ID', ``, 'string') }}",
+            "Teléfono": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tel_fono', ``, 'string') }}",
+            "Nombre": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nombre', ``, 'string') }}",
+            "Apellidos": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Apellidos', ``, 'string') }}",
+            "Descripción": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Descripci_n', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Teléfono",
+              "displayName": "Teléfono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Apellidos",
+              "displayName": "Apellidos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Descripción",
+              "displayName": "Descripción",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        560,
+        0
+      ],
+      "id": "eec2f4ba-ed35-42c7-95ab-263db7cc3348",
+      "name": "ActualizarContacto",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk",
+          "mode": "list",
+          "cachedResultName": "LEADS AGENTE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk/edit#gid=0"
+        },
+        "startIndex": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start_Row_Number', ``, 'number') }}",
+        "numberToDelete": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Number_of_Rows_to_Delete', ``, 'number') }}"
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        720,
+        0
+      ],
+      "id": "126d9ea9-c088-412b-9d01-9cb7e8423b24",
+      "name": "EliminarContacto",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk",
+          "mode": "list",
+          "cachedResultName": "LEADS AGENTE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BpJLMPR02tuUMpPuDWb5dFn4cDoX1p76aJOVcJKPdRk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        880,
+        0
+      ],
+      "id": "3506b500-69ae-4a00-aed8-3d0cd3f2f771",
+      "name": "ObtenerTodosContactos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AddContactos": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ObtenerContactos": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "ActualizarContacto": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "EliminarContacto": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "ObtenerTodosContactos": {
+      "ai_tool": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cf8cfe8e-234b-46b0-9efa-1a8f8382ca09",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c51ad1839a2b94fe998720cbb12ec31aeaf911935a64ba3a674a34c8e1fe57cb"
+  },
+  "id": "pRMLyTgjmSSXaWDp",
+  "tags": []
+}

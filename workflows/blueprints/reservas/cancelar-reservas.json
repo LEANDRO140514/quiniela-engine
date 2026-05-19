@@ -1,0 +1,367 @@
+{
+  "name": "Cancelar Reservas Cabañas",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"FechaNuevaInicio\": \"2025-10-10T14:00:00-03:00\",\n  \"FechaNuevaFinal\": \"2025-10-15T10:00:00-03:00\",\n  \"Telefono\":\"+56954675214\"\n}"
+      },
+      "id": "130a0ac4-4118-4453-a056-e3c472e5a75d",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -384,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=fecha cita: {{ $json.FechaOriginal }}\ntelefono:{{ $('When Executed by Another Workflow').item.json.Telefono }}",
+        "options": {
+          "systemMessage": "=# Rol  \nEres un agente virtual especializado en la gestión y eliminacion de citas.\n\n# Tarea  \nTu tarea es eliminar citas según las solicitudes de los usuarios, siguiendo un proceso estructurado. Para ello, debes:  \n\n1. **Comprobar si la cita existe y coincide con el numero de telefono del usuario**: Usa la herramienta \"BuscarCita\".  \n\n2. Si coincide elimina la cita con \"EliminarCita\".\n\n3. Si no coincide hazle saber al usuario que el numero no coincide con el de la cita.  \n\n4. Si se eliminó la reunión correctamente, utiliza \"EliminarReunion\" para borrar la reunion de la base de datos de usuarios, utilizando el teléfono como id para identificar qué columna de qué usuario particular eliminar.\n\n# Notas  \n- La fecha de hoy es {{ $now }} \n- **ÚNICAMENTE utiliza \"EliminarReunion\" para eliminar el dato de la columna Fecha Reunión, el resto de datos debes mantenerlos.**\n- **NUNCA borres los datos de los usuarios incorrectos, asegúrate de utilizar el id correcto.**\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        400,
+        0
+      ],
+      "id": "50b75064-f83e-42f1-9d2e-c58dc96d3e9e",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        224
+      ],
+      "id": "8ed2061c-9e79-49db-98db-bc6a58d6e202",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rTSt6FnagO3Pruoq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "limit": 1,
+        "timeMin": "={{ $json.FechaNuevaInicio }}",
+        "timeMax": "={{ $json.FechaNuevaFinal }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        272
+      ],
+      "id": "5a4cee5f-e62e-44cb-9773-c0fee4b1c789",
+      "name": "BuscarCita",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', `Event id de la reserva actual.`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        240
+      ],
+      "id": "ec8e01f4-ee4e-49df-b5b2-a17e0c322d93",
+      "name": "EliminarCita",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1ENkRjmKsV7sIY8W6H17yBG_VGk5Z-6_lM8VBlEvTBiE",
+          "mode": "list",
+          "cachedResultName": "Preguntas Cabañas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ENkRjmKsV7sIY8W6H17yBG_VGk5Z-6_lM8VBlEvTBiE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ENkRjmKsV7sIY8W6H17yBG_VGk5Z-6_lM8VBlEvTBiE/edit#gid=0"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        192
+      ],
+      "id": "26a5d6c7-119e-4df3-b39f-922e6b796a3a",
+      "name": "EliminarReunion",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ENkRjmKsV7sIY8W6H17yBG_VGk5Z-6_lM8VBlEvTBiE",
+          "mode": "list",
+          "cachedResultName": "Preguntas Cabañas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ENkRjmKsV7sIY8W6H17yBG_VGk5Z-6_lM8VBlEvTBiE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ENkRjmKsV7sIY8W6H17yBG_VGk5Z-6_lM8VBlEvTBiE/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "={{ $json.Telefono }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -192,
+        0
+      ],
+      "id": "88fa3c0f-86b8-482d-a960-d49d0ecfcc0f",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "42501728-ac70-4e28-88bb-ce566797c6e5",
+              "name": "ID",
+              "value": "={{ $json.ID }}",
+              "type": "string"
+            },
+            {
+              "id": "2d9e5695-28ee-4a6f-94d7-a5b1dc02100e",
+              "name": "Nombre",
+              "value": "={{ $('Get row(s) in sheet').item.json['¿Cual es su nombre?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b5309fbf-35ac-4dd0-b630-9d37b54da584",
+              "name": "FechaActual",
+              "value": "={{ $('Get row(s) in sheet').item.json['¿En que fecha desea reservar la cabaña?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9ccb54e6-2ad4-4c5e-aea5-5ba4fc2358b1",
+              "name": "Correo",
+              "value": "={{ $('Get row(s) in sheet').item.json.Correo }}",
+              "type": "string"
+            },
+            {
+              "id": "7ef7ab55-d37b-4886-a31a-0990ac6142d6",
+              "name": "FechaNuevaInicio",
+              "value": "={{ $('When Executed by Another Workflow').item.json.FechaNuevaInicio }}",
+              "type": "string"
+            },
+            {
+              "id": "7f434641-485a-4ab0-a475-4fb7667163ce",
+              "name": "FechaNuevaFinal",
+              "value": "={{ $('When Executed by Another Workflow').item.json.FechaNuevaFinal }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        0
+      ],
+      "id": "3b74f047-f61e-4ad1-b6d1-baa1358322f8",
+      "name": "Edit Fields",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n// Siempre crea FechaInicio/FechaFin desde FechaActual (14:00 / 10:00, -03:00)\n// Mantiene FechaNuevaInicio/Final si ya vienen.\n// Genera FechaNuevaRango humano.\n\nconst FIXED_OFFSET = \"-03:00\";\n\nconst monthMap = {\n  'enero':1,'febrero':2,'marzo':3,'abril':4,'mayo':5,'junio':6,\n  'julio':7,'agosto':8,'septiembre':9,'setiembre':9,'octubre':10,\n  'noviembre':11,'diciembre':12,\n  'ene':1,'feb':2,'mar':3,'abr':4,'may':5,'jun':6,\n  'jul':7,'ago':8,'sep':9,'oct':10,'nov':11,'dic':12,\n};\nconst MONTHS_ES = ['', 'enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];\n\nconst norm = (s='') => s.toString().trim().toLowerCase().normalize('NFD').replace(/\\p{Diacritic}/gu,'');\nconst pad2 = n => String(n).padStart(2,'0');\nconst toISOFixed = (y,m,d,hh,mm,ss,offset) => `${y}-${pad2(m)}-${pad2(d)}T${pad2(hh)}:${pad2(mm)}:${pad2(ss)}${offset}`;\n\nfunction parseRangoDesdeTexto(textoRaw) {\n  const t = norm(textoRaw ?? '');\n  const now = new Date();\n  const yM = t.match(/(20\\d{2}|19\\d{2})/);\n  const year = yM ? parseInt(yM[1],10) : now.getFullYear();\n  const mKey = Object.keys(monthMap).find(k => t.includes(k));\n  const month = mKey ? monthMap[mKey] : null;\n  let r = t.match(/(?:\\bdel?\\s*)?(\\d{1,2})\\s*(?:al|-|a)\\s*(\\d{1,2})\\b/);\n  let s = null;\n  if (!r) s = t.match(/\\b(\\d{1,2})\\b/);\n  if (!month || (!r && !s)) return null;\n  let d1, d2;\n  if (r) { d1 = parseInt(r[1],10); d2 = parseInt(r[2],10); }\n  else   { d1 = parseInt(s[1],10);  d2 = d1; }\n  if (d2 < d1) [d1,d2] = [d2,d1];\n  return { year, month, d1, d2 };\n}\n\nfunction parseISODateOnly(iso) {\n  if (!iso) return null;\n  const m = String(iso).match(/^(\\d{4})-(\\d{2})-(\\d{2})/);\n  if (!m) return null;\n  return { y:+m[1], m:+m[2], d:+m[3] };\n}\n\nfunction formatRangeEs(a, b) {\n  if (!a || !b) return null;\n  const sameDay = a.y===b.y && a.m===b.m && a.d===b.d;\n  const sameMonth = a.y===b.y && a.m===b.m;\n  const mesA = MONTHS_ES[a.m], mesB = MONTHS_ES[b.m];\n  if (sameDay) return `el ${a.d} de ${mesA}`;\n  if (sameMonth) return `del ${a.d} al ${b.d} de ${mesA}`;\n  if (a.y === b.y) return `del ${a.d} de ${mesA} al ${b.d} de ${mesB}`;\n  return `del ${a.d} de ${mesA} de ${a.y} al ${b.d} de ${mesB} de ${b.y}`;\n}\n\nfor (const item of $input.all()) {\n  // 1) Siempre parsea FechaActual -> FechaInicio/FechaFin\n  const textoActual = item.json.FechaActual ?? item.json.FechaReserva ?? item.json.FechaNueva ?? '';\n  const r = parseRangoDesdeTexto(textoActual);\n  if (r) {\n    item.json.FechaInicio = toISOFixed(r.year, r.month, r.d1, 14, 0, 0, FIXED_OFFSET);\n    item.json.FechaFin    = toISOFixed(r.year, r.month, r.d2, 10, 0, 0, FIXED_OFFSET);\n  } else {\n    // no se pudo parsear -> deja nulos si no estaban\n    if (item.json.FechaInicio === undefined) item.json.FechaInicio = null;\n    if (item.json.FechaFin === undefined)    item.json.FechaFin    = null;\n  }\n\n  // 2) Texto humano: prioriza las nuevas; si no hay, usa las actuales\n  const startRaw = (item.json.FechaNuevaInicio ?? item.json.FechaInicio) || null;\n  const endRaw   = (item.json.FechaNuevaFinal  ?? item.json.FechaFin)   || null;\n  const a = parseISODateOnly(startRaw);\n  const b = parseISODateOnly(endRaw);\n  const rangoHumano = formatRangeEs(a, b);\n\n  item.json.FechaNuevaRango       = rangoHumano;\n  item.json.FechaNuevaInicioHuman = rangoHumano;\n  item.json.FechaNuevaFinalHuman  = rangoHumano;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "cb5f6038-a8b7-488d-94a5-09171c682b36",
+      "name": "Code1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BuscarCita": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EliminarCita": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EliminarReunion": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bbb448b3-7a7a-4ad6-8d10-0d86f212d3be",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "ONsrfKox6QiEdw9h",
+  "tags": []
+}

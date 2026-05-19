@@ -1,0 +1,20 @@
+{
+  "name": "@curdeeclau/knowledge-engine",
+  "version": "0.2.0",
+  "private": true,
+  "description": "RAG-based knowledge retrieval engine for vertical AI assistants",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pinecone-database/pinecone": "^7.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}

@@ -1,0 +1,246 @@
+{
+  "name": "CancelarCitas",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"Fecha\": \"2025-07-10T16:00:00\",\n  \"Telefono\":\"+56954675214\"\n}"
+      },
+      "id": "b9f54972-fc0d-4beb-a9b0-99ec9d4e5145",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=fecha cita: {{ $json.FechaOriginal }}\ntelefono:{{ $('When Executed by Another Workflow').item.json.Telefono }}",
+        "options": {
+          "systemMessage": "=# Rol  \nEres un agente virtual especializado en la gestión y eliminacion de citas.\n\n# Tarea  \nTu tarea es eliminar citas según las solicitudes de los usuarios, siguiendo un proceso estructurado. Para ello, debes:  \n\n1. **Comprobar si la cita existe y coincide con el numero de telefono del usuario**: Usa la herramienta \"BuscarCita\".  \n\n2. Si coincide elimina la cita con \"EliminarCita\".\n\n3. Si no coincide hazle saber al usuario que el numero no coincide con el de la cita.  \n\n4. Si se eliminó la reunión correctamente, utiliza \"EliminarReunion\" para borrar la reunion de la base de datos de usuarios, utilizando el teléfono como id para identificar qué columna de qué usuario particular eliminar.\n\n# Notas  \n- La fecha de hoy es {{ $now }} \n- **ÚNICAMENTE utiliza \"EliminarReunion\" para eliminar el dato de la columna Fecha Reunión, el resto de datos debes mantenerlos.**\n- **NUNCA borres los datos de los usuarios incorrectos, asegúrate de utilizar el id correcto.**\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        400,
+        0
+      ],
+      "id": "dd5389c8-def0-4abe-b1eb-5512f1932ba3",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        224
+      ],
+      "id": "cd9798be-bc42-4dd8-826b-993b37adf3fa",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rTSt6FnagO3Pruoq",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const fechaOriginal = new Date($input.first().json.Fecha);\nfechaOriginal.setHours(fechaOriginal.getHours() + 1);\n\n// Formatear a 'YYYY-MM-DDTHH:mm:ss'\nconst fechaFormateada = fechaOriginal\n  .toISOString()\n  .substring(0, 19);\n\nreturn [\n  {\n    json: {\n      FechaOriginal: $input.first().json.Fecha,\n      FechaMasUnaHora: fechaFormateada,\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1a94ed29-58ba-4256-aca9-22066e322cc7",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "limit": 1,
+        "timeMin": "={{ $json.FechaOriginal }}",
+        "timeMax": "={{ $json.FechaMasUnaHora }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        272
+      ],
+      "id": "df08b316-a19e-4b97-8dc0-62c9d680d5be",
+      "name": "BuscarCita",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "iabyia.business@gmail.com",
+          "mode": "list",
+          "cachedResultName": "iabyia.business@gmail.com"
+        },
+        "eventId": "={{ $fromAI(\"EventID\",\"event id de la cita actual\")}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        240
+      ],
+      "id": "a98ca598-e169-43c5-ae0d-803230de9549",
+      "name": "EliminarCita",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2pzvsxvg1RVYUmMH",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1TJrQ_Aij1xTXTzfASKSosXb27vvts6fk7cb9WeOURRc",
+          "mode": "list",
+          "cachedResultName": "Leads Prueba Agente Imágenes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TJrQ_Aij1xTXTzfASKSosXb27vvts6fk7cb9WeOURRc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TJrQ_Aij1xTXTzfASKSosXb27vvts6fk7cb9WeOURRc/edit#gid=0"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        192
+      ],
+      "id": "de5efd6b-4aae-46e1-ba55-e95b1cef7477",
+      "name": "EliminarReunion",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "b964rKGM8sU1ozA6",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BuscarCita": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EliminarCita": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EliminarReunion": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9ae34e06-aaf4-4db9-a7f4-0d8b87e00d4a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "ti2dlSWgUpkCq3JM",
+  "tags": []
+}

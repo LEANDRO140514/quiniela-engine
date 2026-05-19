@@ -1,0 +1,122 @@
+[
+  {
+    "id": "price-001",
+    "category": "pricing",
+    "procedure": "Consulta de Valoración",
+    "code": "D0120",
+    "basePrice": 0,
+    "priceRange": { "min": 0, "max": 0, "currency": "MXN" },
+    "notes": "Primera consulta sin costo. Incluye radiografías panorámicas y plan de tratamiento.",
+    "typicalDurationMin": 60
+  },
+  {
+    "id": "price-002",
+    "category": "pricing",
+    "procedure": "Limpieza Dental (Profilaxis)",
+    "code": "D1110",
+    "basePrice": 900,
+    "priceRange": { "min": 600, "max": 1200, "currency": "MXN" },
+    "notes": "Varía según cantidad de sarro acumulado. Incluye pulido y aplicación de flúor.",
+    "typicalDurationMin": 45
+  },
+  {
+    "id": "price-003",
+    "category": "pricing",
+    "procedure": "Resina Dental Simple (1 cara)",
+    "code": "D2391",
+    "basePrice": 1000,
+    "priceRange": { "min": 800, "max": 1400, "currency": "MXN" },
+    "notes": "Por superficie. Las resinas de 2+ caras tienen precio incremental.",
+    "typicalDurationMin": 40
+  },
+  {
+    "id": "price-004",
+    "category": "pricing",
+    "procedure": "Resina Dental Compleja (3+ caras)",
+    "code": "D2394",
+    "basePrice": 1800,
+    "priceRange": { "min": 1400, "max": 2200, "currency": "MXN" },
+    "notes": "Incluye reconstrucción mayor. Puede requerir refuerzo con poste.",
+    "typicalDurationMin": 60
+  },
+  {
+    "id": "price-005",
+    "category": "pricing",
+    "procedure": "Extracción Simple",
+    "code": "D7140",
+    "basePrice": 1500,
+    "priceRange": { "min": 1000, "max": 2500, "currency": "MXN" },
+    "notes": "Diente erupcionado. No incluye terceros molares (muelas del juicio).",
+    "typicalDurationMin": 30
+  },
+  {
+    "id": "price-006",
+    "category": "pricing",
+    "procedure": "Extracción de Tercer Molar (Muela del Juicio)",
+    "code": "D7210",
+    "basePrice": 3500,
+    "priceRange": { "min": 2500, "max": 6000, "currency": "MXN" },
+    "notes": "Varía según impactación (parcial/total) y posición. Incluye sutura y control post-quirúrgico.",
+    "typicalDurationMin": 60
+  },
+  {
+    "id": "price-007",
+    "category": "pricing",
+    "procedure": "Tratamiento de Conducto (Endodoncia) Unirradicular",
+    "code": "D3310",
+    "basePrice": 3000,
+    "priceRange": { "min": 2500, "max": 4000, "currency": "MXN" },
+    "notes": "Diente anterior (1 conducto). No incluye corona post-endodoncia.",
+    "typicalDurationMin": 60
+  },
+  {
+    "id": "price-008",
+    "category": "pricing",
+    "procedure": "Tratamiento de Conducto Multirradicular",
+    "code": "D3330",
+    "basePrice": 5000,
+    "priceRange": { "min": 4000, "max": 7000, "currency": "MXN" },
+    "notes": "Molar (3-4 conductos). No incluye corona post-endodoncia.",
+    "typicalDurationMin": 90
+  },
+  {
+    "id": "price-009",
+    "category": "pricing",
+    "procedure": "Corona Zirconia",
+    "code": "D2740",
+    "basePrice": 6000,
+    "priceRange": { "min": 5000, "max": 8000, "currency": "MXN" },
+    "notes": "Altamente estética, máxima resistencia. Incluye cementado. Garantía 3 años.",
+    "typicalDurationMin": 60
+  },
+  {
+    "id": "price-010",
+    "category": "pricing",
+    "procedure": "Blanqueamiento Dental en Consultorio",
+    "code": "D9972",
+    "basePrice": 3000,
+    "priceRange": { "min": 2500, "max": 4000, "currency": "MXN" },
+    "notes": "Sesión única de 90 min. Incluye cubeta personalizada para retoque en casa.",
+    "typicalDurationMin": 90
+  },
+  {
+    "id": "price-011",
+    "category": "pricing",
+    "procedure": "Ortodoncia Brackets Metálicos",
+    "code": "D8080",
+    "basePrice": 24000,
+    "priceRange": { "min": 18000, "max": 30000, "currency": "MXN" },
+    "notes": "Tratamiento completo 12-24 meses. Incluye estudios, colocación, ajustes mensuales y retenedores.",
+    "typicalDurationMin": 60
+  },
+  {
+    "id": "price-012",
+    "category": "pricing",
+    "procedure": "Ortodoncia Invisible (Alineadores)",
+    "code": "D8090",
+    "basePrice": 45000,
+    "priceRange": { "min": 35000, "max": 65000, "currency": "MXN" },
+    "notes": "Tratamiento completo 6-18 meses. Incluye escaneo digital, alineadores y retenedores.",
+    "typicalDurationMin": 45
+  }
+]

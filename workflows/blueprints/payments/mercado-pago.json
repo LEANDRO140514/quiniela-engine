@@ -1,0 +1,138 @@
+{
+  "name": "Mercado Pago",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mercadopago.com/checkout/preferences",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"items\": [\n    {\n      \"id\": \"123456\",\n      \"title\": \"Producto de Prueba\",\n      \"description\": \"Descripción del Producto\",\n      \"category_id\": \"producto\",\n      \"quantity\": 1,\n      \"currency_id\": \"ARS\",\n      \"unit_price\": 50000\n    }\n  ],\n  \"payer\": {\n    \"name\": \"Soledad\",\n    \"surname\": \"Gomez\",\n    \"email\": \"solgomez@gmail.com\",\n    \"phone\": {\n      \"area_code\": \"11\",\n      \"number\": 116565984\n    },\n    \"identification\": {\n      \"type\": \"DNI\",\n      \"number\": \"564654654\"\n    }\n  },\n  \"external_reference\": \"prueba_123\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        -1072
+      ],
+      "id": "d53f7240-60f7-476c-8394-2ce1aeb4d7c7",
+      "name": "Cupones de Pago",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "zlZ1GvtlFUJvlcK2",
+          "name": "Mercado Pago Principal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mp-produccion-webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        -720
+      ],
+      "id": "9ff7ca3a-4e6d-4c55-a371-92e93b0d78c5",
+      "name": "Webhook",
+      "webhookId": "625739aa-f68d-41da-ae72-87226e680bdf"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a0c4f1c2-cc2b-4e35-a1c9-9183a3d4a177",
+              "leftValue": "={{ $json.body.type }}",
+              "rightValue": "payment",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        -720
+      ],
+      "id": "16f4a196-f201-4450-9eef-2deddddf5f2f",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.mercadopago.com/v1/payments/{{ $('Webhook').item.json.query['data.id'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        784,
+        -752
+      ],
+      "id": "372a7762-0413-4323-a52e-7157a054cc3f",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "zlZ1GvtlFUJvlcK2",
+          "name": "Mercado Pago Principal"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "12747481-fdc7-4df2-aea5-d57f834f9b30",
+  "meta": {
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "MGwk2UQRvxIcRIkU",
+  "tags": []
+}

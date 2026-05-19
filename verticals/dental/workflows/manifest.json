@@ -1,0 +1,58 @@
+{
+  "vertical": "dental",
+  "workflows": [
+    {
+      "id": "wf-new-patient",
+      "name": "Registro de Paciente Nuevo",
+      "description": "Flujo completo de registro de paciente nuevo: datos personales, historial médico, seguro, primera cita",
+      "steps": [
+        "collectPersonalInfo",
+        "collectMedicalHistory",
+        "collectInsuranceInfo",
+        "scheduleFirstAppointment",
+        "sendConfirmationAndPrep"
+      ],
+      "status": "planned",
+      "phase": 3
+    },
+    {
+      "id": "wf-emergency-triage",
+      "name": "Triaje de Urgencia Dental",
+      "description": "Evalúa nivel de urgencia y determina acción según protocolo de emergencia",
+      "steps": [
+        "assessPainLevel",
+        "identifySymptoms",
+        "classifyUrgencyByEscalationRules",
+        "scheduleOrEscalate"
+      ],
+      "status": "planned",
+      "phase": 3
+    },
+    {
+      "id": "wf-appointment-scheduling",
+      "name": "Agendamiento de Cita",
+      "description": "Flujo para agendar cita: tipo de procedimiento, disponibilidad, confirmación",
+      "steps": [
+        "identifyProcedure",
+        "checkAvailability",
+        "selectDateTime",
+        "confirmAndNotify"
+      ],
+      "status": "planned",
+      "phase": 3
+    },
+    {
+      "id": "wf-treatment-inquiry",
+      "name": "Consulta de Información de Tratamiento",
+      "description": "Responde dudas sobre procedimientos, precios, preparación y cuidados",
+      "steps": [
+        "identifyProcedure",
+        "loadKnowledge",
+        "presentInfo",
+        "offerAppointment"
+      ],
+      "status": "planned",
+      "phase": 3
+    }
+  ]
+}

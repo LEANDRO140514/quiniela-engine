@@ -1,0 +1,27 @@
+{
+  "domain": "data",
+  "title": "Data Ingestion & Intelligence Workflows",
+  "description": "Blueprints de ingesta automatizada de leads desde email y consulta conversacional sobre la base de datos. Pipeline: trigger de email → clasificación LLM → extracción estructurada → almacenamiento → agente de consulta con filtros.",
+  "status": "reference-blueprint",
+  "source": "n8n-export",
+  "intendedUse": "functional-reference",
+  "copyPolicy": "do-not-copy-literally",
+  "conversionTarget": [
+    "data-engine",
+    "lead-intelligence-engine"
+  ],
+  "providersObserved": [
+    "gmail",
+    "n8n-data-tables",
+    "google-sheets",
+    "openai",
+    "postgres"
+  ],
+  "platformPrinciples": [
+    "deterministic-first",
+    "ai-second",
+    "provider-agnostic",
+    "adapter-based"
+  ],
+  "notes": "Gmail es el adapter actual de fuente de email; futuro: GHL Mail. n8n Data Tables es el adapter de almacenamiento; futuro: GHL CRM o Supabase. El schema de campos (nombre, email, telefono, resumen, tipo_consulta, urgencia, presupuesto, estado) es el contrato a preservar."
+}

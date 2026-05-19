@@ -1,0 +1,411 @@
+{
+  "name": "ComprobarFecha",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"Fecha\": \"2025-07-09T15:30:00\" \n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -768,
+        208
+      ],
+      "id": "7b3de5a6-6408-4673-b9f6-d95b605a9d3a",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d12b307-21cb-482a-a7a2-9c61a5399282",
+              "name": "Es domingo",
+              "value": "Invalido, el dia cae dia domingo, no atendemos ese dia, porfavor escoja otro",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        80
+      ],
+      "id": "643d23ba-1a56-4993-8f7c-44de585a6c71",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35618fe3-477f-430e-91cd-60c46a5c8d9b",
+              "name": "Fecha valida?",
+              "value": "=Estado:{{ $json.horaEstado }}\nJustificacion:{{ $json.horaJustificacion }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        368
+      ],
+      "id": "423d2457-4452-4b40-99bf-a7937967edc3",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "function convertirAHorasMinutos(horaStr) {\n  const [hh, mm] = horaStr.split(':').map(Number);\n  return hh * 60 + mm;\n}\n\nfor (const item of $input.all()) {\n  const horaInput = item.json.hora; // Ej: \"11:30\"\n  const minutosInput = convertirAHorasMinutos(horaInput);\n\n  // Definir rangos en minutos\n  const inicioAtencion = convertirAHorasMinutos(\"08:00\");\n  const finAtencion = convertirAHorasMinutos(\"18:00\");\n  const inicioAlmuerzo = convertirAHorasMinutos(\"12:00\");\n  const finAlmuerzo = convertirAHorasMinutos(\"14:00\");\n\n  let estado = \"válido\";\n  let justificacion = \"\";\n\n  if (minutosInput < inicioAtencion || minutosInput >= finAtencion) {\n    estado = \"inválido\";\n    justificacion = \"Hora fuera de horario de atención\";\n  } else if (minutosInput >= inicioAlmuerzo && minutosInput < finAlmuerzo) {\n    estado = \"inválido\";\n    justificacion = \"Horario de almuerzo\";\n  }\n\n  item.json.horaEstado = estado;\n  item.json.horaJustificacion = justificacion;\n}\n\nreturn $input.all();\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        368
+      ],
+      "id": "1b2229f6-f603-4f3b-a427-e659060fa333",
+      "name": "Verificacion hora, cambiar codigo si necesita cambiar horarios"
+    },
+    {
+      "parameters": {
+        "jsCode": "function convertirAHorasMinutos(horaStr) {\n  const [hh, mm] = horaStr.split(':').map(Number);\n  return hh * 60 + mm;\n}\n\nfor (const item of $input.all()) {\n  const horaInput = item.json.hora; // Ej: \"11:30\"\n  const minutosInput = convertirAHorasMinutos(horaInput);\n\n  // Definir rangos en minutos\n  const inicioAtencion = convertirAHorasMinutos(\"10:00\");\n  const finAtencion = convertirAHorasMinutos(\"16:00\");\n  const inicioAlmuerzo = convertirAHorasMinutos(\"14:00\");\n  const finAlmuerzo = convertirAHorasMinutos(\"15:00\");\n\n  let estado = \"válido\";\n  let justificacion = \"\";\n\n  if (minutosInput < inicioAtencion || minutosInput >= finAtencion) {\n    estado = \"inválido\";\n    justificacion = \"Hora fuera de horario de atención\";\n  } else if (minutosInput >= inicioAlmuerzo && minutosInput < finAlmuerzo) {\n    estado = \"inválido\";\n    justificacion = \"Horario de almuerzo\";\n  }\n\n  item.json.horaEstado = estado;\n  item.json.horaJustificacion = justificacion;\n}\n\nreturn $input.all();\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        160
+      ],
+      "id": "43240e93-200b-4cf2-99ea-da3ace5069d8",
+      "name": "Verificar horarios sabado"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35618fe3-477f-430e-91cd-60c46a5c8d9b",
+              "name": "Fecha valida?",
+              "value": "=Estado:{{ $json.horaEstado }}\nJustificacion:{{ $json.horaJustificacion }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        160
+      ],
+      "id": "a22231ab-d80e-460f-917a-c547a756df90",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d31283d5-aa5a-432d-a457-9a071ee666f6",
+              "name": "mensaje enviado",
+              "value": "La fecha ingresada es pasada, por favor ingrese una fecha valida",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "80662409-50af-4860-bdf8-1af5d8a4e550",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fechaTexto = $input.first().json.Fecha;\nconst fechaInput = new Date(fechaTexto);\nconst fechaActual = new Date();\n\n// Formatear ambas fechas a YYYY-MM-DD\nconst formatoFecha = (fecha) => fecha.toISOString().substring(0, 10);\n\nconst fechaInputStr = formatoFecha(fechaInput);\nconst fechaActualStr = formatoFecha(fechaActual);\n\nif (fechaInputStr < fechaActualStr) {\n  return [\n    {\n      json: {\n        valida: false,\n        mensaje: \"Fecha inválida. Es una fecha pasada.\",\n        fecha: fechaInputStr\n      }\n    }\n  ];\n} else {\n  return [\n    {\n      json: {\n        valida: true,\n        mensaje: \"La fecha es válida (hoy o en el futuro).\",\n        fecha: fechaInputStr\n      }\n    }\n  ];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        208
+      ],
+      "id": "c3f5d173-83f3-4e61-9691-fdb91b410d2a",
+      "name": "Fecha pasada o futura?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $('When Executed by Another Workflow').first().json.Fecha;\n\n// Convertir a objeto Date\nconst date = new Date(raw);\n\n// Formatear componentes\nconst dd = String(date.getDate()).padStart(2, '0');\nconst mm = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() es base 0\nconst yyyy = date.getFullYear();\nconst HH = String(date.getHours()).padStart(2, '0');\nconst min = String(date.getMinutes()).padStart(2, '0');\n\n// Resultado final\nconst formatted = `${dd}/${mm}/${yyyy} ${HH}:${min}`;\n\nreturn [{ json: { formato_final: formatted } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        224
+      ],
+      "id": "4ccb0719-c8fb-459e-bbfe-07d2486b012c",
+      "name": "Formatear fecha"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json.formato_final; // \"17/04/2025 08:00\"\n\nconst [fechaRaw, hora] = input.split(\" \");\nconst [dia, mes, año] = fechaRaw.split(\"/\");\n\nconst fechaISO = `${año}-${mes}-${dia}T00:00:00Z`;\nconst fechaDate = new Date(fechaISO);\n\nconst diasSemana = [\"domingo\", \"lunes\", \"martes\", \"miércoles\", \"jueves\", \"viernes\", \"sábado\"];\nconst diaSemana = diasSemana[fechaDate.getUTCDay()];\n\nreturn [{\n  json: {\n    query: input,\n    fecha: fechaRaw,\n    hora: hora,\n    diaSemana: diaSemana\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        224
+      ],
+      "id": "9bef99db-1405-4f10-9f7d-8f85fe02997a",
+      "name": "Obtener hora y dia de la semana"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aa43dfb1-0038-4295-ba3b-775630ef858f",
+              "leftValue": "={{ $json.diaSemana }}",
+              "rightValue": "domingo",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        224
+      ],
+      "id": "3eb963ee-a6a3-4f67-abf3-0d2a3b30fccb",
+      "name": "Es domingo?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "05d80444-201b-40ac-83a3-642c56669aa3",
+              "leftValue": "={{ $json.diaSemana }}",
+              "rightValue": "=sábado",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        272
+      ],
+      "id": "39404c6f-e1b8-41ef-a8ba-80940760341a",
+      "name": "es sabado?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b5fbe098-7ea1-4cda-abc8-ec9b060131c3",
+              "leftValue": "={{ $json.valida }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -288,
+        208
+      ],
+      "id": "e309fb66-5379-4ac6-b6f8-1f82bea0aec3",
+      "name": "valida?"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Fecha pasada o futura?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificacion hora, cambiar codigo si necesita cambiar horarios": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar horarios sabado": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fecha pasada o futura?": {
+      "main": [
+        [
+          {
+            "node": "valida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear fecha": {
+      "main": [
+        [
+          {
+            "node": "Obtener hora y dia de la semana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener hora y dia de la semana": {
+      "main": [
+        [
+          {
+            "node": "Es domingo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es domingo?": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "es sabado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "es sabado?": {
+      "main": [
+        [
+          {
+            "node": "Verificar horarios sabado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificacion hora, cambiar codigo si necesita cambiar horarios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "valida?": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Formatear fecha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6b8c75d8-6944-4ea1-9863-3626475c806f",
+  "meta": {
+    "instanceId": "013a9278bb362c6f6c3a1177a8fe84a3cd5500fbeb3238ca46513591bb2715aa"
+  },
+  "id": "oAfhZ3XfQo8cpFJi",
+  "tags": []
+}

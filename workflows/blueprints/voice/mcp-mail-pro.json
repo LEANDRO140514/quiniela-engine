@@ -1,0 +1,225 @@
+{
+  "name": "MCP MAIL PRO copy",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "77435d0a-0f5b-4e08-9bd8-86fab8aa1f3f"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        80
+      ],
+      "id": "9590777a-2ba1-4717-a45a-ce9b13eeeccc",
+      "name": "MCP Server Trigger",
+      "webhookId": "77435d0a-0f5b-4e08-9bd8-86fab8aa1f3f"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', `El destinatario del email.`, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        112
+      ],
+      "id": "5bd035cd-0f44-41b0-8aef-3fb5854e2db7",
+      "name": "Enviar Email",
+      "webhookId": "205e3083-c06a-4fcb-a1e1-ee1f762bcb31",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "webgSMWyKSiwMMbD",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        112
+      ],
+      "id": "837f0940-1e2a-4a15-a1fa-c59a66764b16",
+      "name": "Responder Email",
+      "webhookId": "0418d12f-e14c-4ddd-ba12-98e161f6df14",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "webgSMWyKSiwMMbD",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Email', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        112
+      ],
+      "id": "4c1c7e01-1c41-44bc-92af-2c2f65ea889e",
+      "name": "Crear Borrador",
+      "webhookId": "18966ca1-80df-4e6e-9d48-0b9844fd0155",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "webgSMWyKSiwMMbD",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "filters": {
+          "receivedAfter": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_After', ``, 'string') }}",
+          "receivedBefore": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_Before', ``, 'string') }}",
+          "sender": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sender', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        112
+      ],
+      "id": "d69e1217-c903-4bc9-8b7e-47e1b068fd58",
+      "name": "Obtener Emails",
+      "webhookId": "8ed09c66-fc44-48db-9a5d-2cdcb1272692",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "webgSMWyKSiwMMbD",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1136,
+        112
+      ],
+      "id": "4aef2177-9085-47d9-8783-2065f6845e67",
+      "name": "Eliminar Email",
+      "webhookId": "6d8f0b03-dec8-4019-ad18-32671394c367",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "webgSMWyKSiwMMbD",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "ignacioarruvito@iabyia.online",
+        "toEmail": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Email', `El destinatario del mail.`, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailFormat": "text",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSendTool",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        368
+      ],
+      "id": "e5000564-9216-4898-8686-cd3596cdec06",
+      "name": "Enviar_Mail",
+      "webhookId": "2d6070ed-cf03-4690-863e-902e8d9e2c1f",
+      "credentials": {
+        "smtp": {
+          "id": "NGm9H6wjIMkU0XIw",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Enviar Email": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Responder Email": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Crear Borrador": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Obtener Emails": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Eliminar Email": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Enviar_Mail": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ac15fb15-69f5-466a-8d04-ddfb428ae840",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c51ad1839a2b94fe998720cbb12ec31aeaf911935a64ba3a674a34c8e1fe57cb"
+  },
+  "id": "bozAvXopmwgnmYze",
+  "tags": []
+}
