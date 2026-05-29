@@ -14,6 +14,8 @@ import { DebounceService } from '../services/DebounceService';
 import { MessageBatcher } from '../services/MessageBatcher';
 
 export class MessageBufferEngine {
+  readonly engineName = 'message-buffer-engine';
+
   private store: InMemoryBufferStore;
   private deduplicator: MessageDeduplicator;
   private debounce: DebounceService;
@@ -34,6 +36,45 @@ export class MessageBufferEngine {
     this.debounce = new DebounceService((conversationId) => {
       this.onDebounceExpired(conversationId);
     });
+  }
+
+  // ── Engine Contract ─────────────────────────────────────
+
+  async execute(action: string, context: Record<string, unknown>): Promise<Record<string, unknown>> {
+    try {
+      switch (action) {
+        case 'buffer_message': {
+          const message = context.message as BufferMessage | undefined;
+          if (!message) return { error: 'missing_message', message: 'context.message is required for buffer_message' };
+          return this.bufferMessage(message) as unknown as Record<string, unknown>;
+        }
+        case 'flush_conversation': {
+          const conversationId = context.conversationId as string | undefined;
+          if (!conversationId) return { error: 'missing_conversation_id', message: 'context.conversationId is required for flush_conversation' };
+          return this.flushConversation(conversationId) as unknown as Record<string, unknown>;
+        }
+        case 'get_conversation_state': {
+          const conversationId = context.conversationId as string | undefined;
+          if (!conversationId) return { error: 'missing_conversation_id', message: 'context.conversationId is required for get_conversation_state' };
+          return { state: this.getConversationState(conversationId) };
+        }
+        case 'clear_conversation': {
+          const conversationId = context.conversationId as string | undefined;
+          if (!conversationId) return { error: 'missing_conversation_id', message: 'context.conversationId is required for clear_conversation' };
+          this.clearConversation(conversationId);
+          return { cleared: true };
+        }
+        case 'check_duplicate': {
+          const message = context.message as BufferMessage | undefined;
+          if (!message) return { error: 'missing_message', message: 'context.message is required for check_duplicate' };
+          return { duplicate: this.dedupeMessage(message) };
+        }
+        default:
+          return { error: 'unknown_action', message: `Unknown action: ${action}` };
+      }
+    } catch (err) {
+      return { error: 'execution_failed', message: err instanceof Error ? err.message : String(err) };
+    }
   }
 
   // ── Public API ──────────────────────────────────────────

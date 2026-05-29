@@ -1,16 +1,5 @@
-// ── Canonical Contracts ─────────────────────────────────
-export type { DomainEvent } from '@curdeeclau/shared';
-
 // ── Engine ──────────────────────────────────────────────
 export { MessageBufferEngine } from './engine/MessageBufferEngine';
-
-// ── Stores ──────────────────────────────────────────────
-export { InMemoryBufferStore } from './stores/InMemoryBufferStore';
-
-// ── Services ────────────────────────────────────────────
-export { MessageBatcher } from './services/MessageBatcher';
-export { MessageDeduplicator } from './services/MessageDeduplicator';
-export { DebounceService } from './services/DebounceService';
 
 // ── Types ───────────────────────────────────────────────
 export {

@@ -40,8 +40,14 @@ export type { ExecutionContext } from './runtime/ExecutionContext';
 export {
   createOwnershipRecord,
   isTransferAllowed,
+  validateOwnershipTransition,
 } from './runtime/Ownership';
-export type { ConversationOwner, OwnershipRecord } from './runtime/Ownership';
+export type {
+  ConversationOwner,
+  OwnershipRecord,
+  OwnershipChangeCause,
+  OwnershipChangedPayload,
+} from './runtime/Ownership';
 
 export {
   SUPPRESSION_MATRIX,
@@ -61,6 +67,19 @@ export type {
 } from './runtime/EventCatalog';
 
 export type { Engine } from './runtime/EngineContract';
+
+export type { LifecycleState, LifecycleError, EngineLifecycle } from './runtime/EngineLifecycle';
+
+export type {
+  StepExhaustionStrategy,
+  EngineFailureStrategy,
+  DependencyFailureStrategy,
+  OrchestrationPolicy,
+} from './runtime/OrchestrationPolicy';
+export { DEFAULT_ORCHESTRATION_POLICY } from './runtime/OrchestrationPolicy';
+
+export type { RuntimeState, RuntimePhase, RuntimeLifecycle } from './runtime/RuntimeLifecycle';
+export { deriveRuntimeState } from './runtime/RuntimeLifecycle';
 
 export { createProviderError, wrapProviderError } from './runtime/ProviderError';
 export type { ProviderFailureType, ProviderError } from './runtime/ProviderError';

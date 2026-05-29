@@ -65,10 +65,17 @@ export interface FlushResult {
 }
 
 // ── Future delivery types (Phase 4+) ─────────────────────
-// Kept for forward compatibility with message delivery engine.
+//
+// @transitional — Scheduled for extraction to a dedicated delivery
+// package (Phase 4+). Current import path from
+// @curdeeclau/message-buffer-engine is stable and supported.
+// Consumers should pin their version. A migration path will be
+// provided when the delivery package is activated.
 
+/** @transitional — Planned extraction to delivery package (Phase 4+). */
 export type MessageChannel = 'whatsapp' | 'sms' | 'email' | 'web';
 
+/** @transitional — Planned extraction to delivery package (Phase 4+). */
 export type MessageStatus =
   | 'queued'
   | 'sending'
@@ -78,8 +85,10 @@ export type MessageStatus =
   | 'expired'
   | 'cancelled';
 
+/** @transitional — Planned extraction to delivery package (Phase 4+). */
 export type MessagePriority = 'low' | 'normal' | 'high' | 'urgent';
 
+/** @transitional — Planned extraction to delivery package (Phase 4+). */
 export interface Message {
   id: string;
   channel: MessageChannel;
@@ -92,6 +101,7 @@ export interface Message {
   metadata?: Record<string, unknown>;
 }
 
+/** @transitional — Planned extraction to delivery package (Phase 4+). */
 export interface MessageEnvelope {
   message: Message;
   status: MessageStatus;
@@ -103,6 +113,7 @@ export interface MessageEnvelope {
   createdAt: string;
 }
 
+/** @transitional — Planned extraction to delivery package (Phase 4+). */
 export interface DeliveryReceipt {
   messageId: string;
   channel: MessageChannel;
@@ -113,6 +124,7 @@ export interface DeliveryReceipt {
   channelReceiptId?: string;
 }
 
+/** @transitional — Planned extraction to delivery package (Phase 4+). */
 export interface MessageBufferConfig {
   maxRetries: number;
   baseRetryDelayMs: number;
@@ -121,11 +133,13 @@ export interface MessageBufferConfig {
   dedupWindowMs: number;
 }
 
+/** @transitional — Planned extraction to delivery package (Phase 4+). */
 export interface MessageSender {
   readonly channel: MessageChannel;
   send(message: Message): Promise<DeliveryReceipt>;
 }
 
+/** @transitional — Planned extraction to delivery package (Phase 4+). */
 export interface MessageBuffer {
   enqueue(message: Message): Promise<MessageEnvelope>;
   get(messageId: string): Promise<MessageEnvelope | null>;

@@ -24,52 +24,55 @@
 ## 🧱 INFRAESTRUCTURA ACTUAL
 
 ### Apps (Fase 1)
-| App | Estado |
-|-----|--------|
-| `dental-ai-receptionist` | Estable — Recepcionista dental con IA |
+
+| App                             | Estado                                           |
+| ------------------------------- | ------------------------------------------------ |
+| `dental-ai-receptionist`        | Estable — Recepcionista dental con IA            |
 | `landing_oraculo_society_forge` | En desarrollo — Template Forge (submódulo dirty) |
-| `quiniela-2026_deepclaude` | Estable — Control de predicciones Liga MX |
-| `reducidas-2026` | Estable — Filtros matemáticos Progol/Revancha |
-| `survivor-world-cup` | Estable — Survivor World Cup |
+| `quiniela-2026_deepclaude`      | Estable — Control de predicciones Liga MX        |
+| `reducidas-2026`                | Estable — Filtros matemáticos Progol/Revancha    |
+| `survivor-world-cup`            | Estable — Survivor World Cup                     |
 
 ### Packages Core
-| Package | Rol | Estado |
-|---------|-----|--------|
-| `shared/` | Contratos canónicos (DomainEvent, Ownership, ExecutionContext, CRM, Calendar, Workflow) | Activo |
-| `engines/calendar-engine` | Coordinación temporal (reservas, disponibilidad, recordatorios) | Spec |
-| `engines/crm-engine` | CRM provider-agnóstico | Activo |
-| `engines/ghl-engine` | CRM con adapter GHL | Spec/Implement |
-| `engines/handoff-engine` | Ownership, supresión, recuperación AI↔Humano | Activo |
-| `engines/media-delivery-engine` | Entrega de medios | Activo |
-| `engines/message-buffer-engine` | Buffer de mensajes | Activo |
-| `engines/workflow-orchestrator` | Orquestación central de workflows | Activo |
-| `knowledge-engine/` | RAG, retrieval, memory windows, confidence scoring | Design |
-| `algorithmus/` | Algoritmos y plataforma | Activo |
-| `math-engine/` | Motor matemático (Python, fuera de pnpm workspace) | Activo |
+
+| Package                         | Rol                                                                                     | Estado         |
+| ------------------------------- | --------------------------------------------------------------------------------------- | -------------- |
+| `shared/`                       | Contratos canónicos (DomainEvent, Ownership, ExecutionContext, CRM, Calendar, Workflow) | Activo         |
+| `engines/calendar-engine`       | Coordinación temporal (reservas, disponibilidad, recordatorios)                         | Spec           |
+| `engines/crm-engine`            | CRM provider-agnóstico                                                                  | Activo         |
+| `engines/ghl-engine`            | CRM con adapter GHL                                                                     | Spec/Implement |
+| `engines/handoff-engine`        | Ownership, supresión, recuperación AI↔Humano                                            | Activo         |
+| `engines/media-delivery-engine` | Entrega de medios                                                                       | Activo         |
+| `engines/message-buffer-engine` | Buffer de mensajes                                                                      | Activo         |
+| `engines/workflow-orchestrator` | Orquestación central de workflows                                                       | Activo         |
+| `knowledge-engine/`             | RAG, retrieval, memory windows, confidence scoring                                      | Design         |
+| `algorithmus/`                  | Algoritmos y plataforma                                                                 | Activo         |
+| `math-engine/`                  | Motor matemático (Python, fuera de pnpm workspace)                                      | Activo         |
 
 ### OpenSpec Change Proposals Activas
-| Change | Fase OpenSpec | Entidades Canónicas | Invariantes |
-|--------|---------------|---------------------|-------------|
-| `create-ghl-engine` | Spec / Implement | 4 (Contact, Opportunity, Pipeline, Campaign) | 22 |
-| `create-calendar-engine` | Spec | 4 (Calendar, TimeSlot, Reservation, Reminder) | 30 |
-| `create-knowledge-engine` | Design | 6 (Source, Document, Chunk, Query, Result, MemoryWindow) | 25 |
+
+| Change                    | Fase OpenSpec    | Entidades Canónicas                                      | Invariantes |
+| ------------------------- | ---------------- | -------------------------------------------------------- | ----------- |
+| `create-ghl-engine`       | Spec / Implement | 4 (Contact, Opportunity, Pipeline, Campaign)             | 22          |
+| `create-calendar-engine`  | Spec             | 4 (Calendar, TimeSlot, Reservation, Reminder)            | 30          |
+| `create-knowledge-engine` | Design           | 6 (Source, Document, Chunk, Query, Result, MemoryWindow) | 25          |
 
 ## 🔴 DRIFT CATALOG — CONVERGENCIA PENDIENTE (RT-1.5)
 
 Registro de divergencias entre la Constitución RT-1.5 y la implementación actual. Gobernanza manda; el código converge.
 
-| ID | Ubicación | Divergencia | Severidad |
-|----|-----------|-------------|-----------|
-| **D-001** | `workflow-orchestrator/src/types.ts` | Redefine `DomainEvent` sin `causationId`, `actorId`, `verticalId`, `workspaceId`, `metadata` | Crítica |
-| **D-002** | `workflow-orchestrator/src/types.ts` | Redefine `WorkflowContext`, `StepResult`, `StepStatus` en lugar de importar de `shared/` | Crítica |
-| **D-003** | `workflow-orchestrator/src/events/DomainEvent.ts` | Event ID usa contador monotónico, no ULID/UUIDv7 (viola I-E6) | Alta |
-| **D-004** | `handoff-engine/src/types.ts` | Define `HandoffDomainEvent` como universo paralelo de eventos sin extender `DomainEvent` canónico | Alta |
-| **D-005** | `ghl-engine/src/types.ts` | Exporta entidades con forma GHL (`GHLContact`, `GHLOpportunity`) sin mapeo canónico | Alta |
-| **D-006** | `ghl-engine/` | Sin adapter implementando `CRMProvider` interface de `crm-engine` | Alta |
-| **D-007** | `crm-engine/src/types.ts` | Define `CRMEngineContext` divergente de `ExecutionContext` en `shared/` | Media |
-| **D-008** | `handoff-engine/` | Sin carpeta OpenSpec (gobierna ownership/suppression/recovery — conceptos runtime críticos) | Media |
-| **D-009** | `workflow-orchestrator/` | Sin carpeta OpenSpec | Media |
-| **D-010** | `math-engine/` | Proyecto Python fuera del workspace pnpm; sin integración con contratos `shared/` | Baja |
+| ID        | Ubicación                                         | Divergencia                                                                                       | Severidad |
+| --------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------- | --------- |
+| **D-001** | `workflow-orchestrator/src/types.ts`              | Redefine `DomainEvent` sin `causationId`, `actorId`, `verticalId`, `workspaceId`, `metadata`      | Crítica   |
+| **D-002** | `workflow-orchestrator/src/types.ts`              | Redefine `WorkflowContext`, `StepResult`, `StepStatus` en lugar de importar de `shared/`          | Crítica   |
+| **D-003** | `workflow-orchestrator/src/events/DomainEvent.ts` | Event ID usa contador monotónico, no ULID/UUIDv7 (viola I-E6)                                     | Alta      |
+| **D-004** | `handoff-engine/src/types.ts`                     | Define `HandoffDomainEvent` como universo paralelo de eventos sin extender `DomainEvent` canónico | Alta      |
+| **D-005** | `ghl-engine/src/types.ts`                         | Exporta entidades con forma GHL (`GHLContact`, `GHLOpportunity`) sin mapeo canónico               | Alta      |
+| **D-006** | `ghl-engine/`                                     | Sin adapter implementando `CRMProvider` interface de `crm-engine`                                 | Alta      |
+| **D-007** | `crm-engine/src/types.ts`                         | Define `CRMEngineContext` divergente de `ExecutionContext` en `shared/`                           | Media     |
+| **D-008** | `handoff-engine/`                                 | Sin carpeta OpenSpec (gobierna ownership/suppression/recovery — conceptos runtime críticos)       | Media     |
+| **D-009** | `workflow-orchestrator/`                          | Sin carpeta OpenSpec                                                                              | Media     |
+| **D-010** | `math-engine/`                                    | Proyecto Python fuera del workspace pnpm; sin integración con contratos `shared/`                 | Baja      |
 
 ## 🚀 HOJA DE RUTA Y ESCALABILIDAD FUTURA
 
